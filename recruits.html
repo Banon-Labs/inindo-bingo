@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inindo — recruit finder map of Japan</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 1.5rem auto; padding: 0 1rem; background: #101018; color: #e8e8f0; }
+  h1 { font-size: 1.1rem; color: #8cf; text-align: center; }
+  .sub { text-align: center; color: #9aa; font-size: .85rem; margin-top: -.3rem; }
+  #wrap { display: flex; gap: 1rem; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  #map { position: relative; background: #0e2236; border: 2px solid #3a5570; border-radius: 10px; }
+  #land { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
+  .town { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; box-sizing: border-box; }
+  .dot { width: 9px; height: 9px; background: #5b6b7d; border: 1px solid #1a2430; }
+  .recruit { width: 16px; height: 16px; cursor: pointer; border: 2px solid #0c1118; background: #45d6e8; box-shadow: 0 0 5px #45d6e888; }
+  .recruit:hover { border-color: #fff; }
+  .recruit.sel { border-color: #6f6; box-shadow: 0 0 6px #6f6; }
+  .label { position: absolute; transform: translate(-50%, 6px); font-size: .68rem; color: #aef; white-space: nowrap; cursor: pointer; text-shadow: 0 1px 2px #000; }
+  .label .at { color: #9aa; font-size: .58rem; }
+  #offmap { text-align: center; font-size: .85rem; color: #9aa; margin-top: .5rem; }
+  #offmap a { cursor: pointer; }
+  #panel { width: 300px; background: #1c2230; border: 1px solid #445; border-radius: 8px; padding: .8rem; min-height: 230px; }
+  #panel h2 { margin: 0 0 .1rem; font-size: 1.05rem; color: #ffd479; }
+  #panel .cls { color: #9ad; font-size: .85rem; margin-bottom: .4rem; }
+  #panel h3 { font-size: .8rem; color: #8cf; margin: .7rem 0 .2rem; text-transform: uppercase; letter-spacing: .05em; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: .05rem .8rem; font-size: .85rem; }
+  .stats span b { color: #ffd479; font-weight: 600; float: right; }
+  .gear li, .recru li { font-size: .85rem; margin: .1rem 0; }
+  ul { margin: .1rem 0; padding-left: 1.1rem; }
+  .note { font-size: .74rem; color: #99a; font-style: italic; line-height: 1.35; }
+  .ok { color: #8f8; } .no { color: #ff9a7a; }
+  .legend { text-align: center; font-size: .8rem; color: #9aa; margin-top: .6rem; }
+  .legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 .25rem 0 .9rem; vertical-align: middle; }
+  a { color: #8cf; }
+  footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #334; color: #778; font-size: .76rem; line-height: 1.5; text-align: center; }
+</style>
+</head>
+<body>
+<h1>ININDO RECRUIT FINDER — all 8 allies, where they start</h1>
+<p class="sub">Positions, stats, gear, and recruit rules are decoded from the game data. Click a name to open the character sheet. · <a href="map.html">casino map</a> · <a href="index.html">play bingo →</a></p>
+<div id="wrap">
+  <div>
+    <div id="map"></div>
+    <div id="offmap"></div>
+  </div>
+  <div id="panel">
+    <h2 id="who">Pick a recruit</h2>
+    <div class="cls" id="cls"></div>
+    <div id="sheet">Cyan markers are the 8 recruitable allies, shown at the town where each one starts the game. Click one.</div>
+  </div>
+</div>
+<p class="legend"><b style="background:#45d6e8"></b>recruitable ally <b style="background:#5b6b7d"></b>town (no recruit)</p>
+
+<footer>
+  Made for educational and research purposes only. Independent, unaffiliated
+  reverse-engineering of game mechanics; no ROM, graphics, audio, or original
+  text. <em>Inindo: Way of the Ninja</em> and all original game content are
+  © <a href="https://en.wikipedia.org/wiki/Koei">Koei</a> (now Koei Tecmo Games).
+</footer>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const PXSCALE = 9; // on-screen pixels per overworld land cell
+
+let towns = [], recruits = [], howto = null, selected = null, grid = null;
+
+function drawLand() {
+  const cv = document.createElement("canvas");
+  cv.id = "land";
+  cv.width = grid.cols; cv.height = grid.rows;
+  cv.style.width = (grid.cols * PXSCALE) + "px";
+  cv.style.height = (grid.rows * PXSCALE) + "px";
+  const ctx = cv.getContext("2d");
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++)
+      if (grid.land[r][c] === "#") {
+        ctx.fillStyle = r % 3 === 0 ? "#3f6b3a" : "#4a7d42";
+        ctx.fillRect(c, r, 1, 1);
+      }
+  $("map").style.width = (grid.cols * PXSCALE) + "px";
+  $("map").style.height = (grid.rows * PXSCALE) + "px";
+  $("map").replaceChildren(cv);
+}
+
+const cellX = (gx) => (gx - grid.ox + 0.5) * PXSCALE;
+const cellY = (gy) => (gy - grid.oy + 0.5) * PXSCALE;
+
+function statRow(label, v) { return `<span>${label}<b>${v}</b></span>`; }
+
+function showRecruit(r) {
+  selected = r;
+  $("who").textContent = r.name;
+  $("cls").textContent = `${r.class} · level ${r.stats.level} · starts in ${r.location.name}` +
+    (r.location.name_status !== "confirmed" ? " (location name unverified)" : "");
+  const s = r.stats;
+  const gear = r.equipped.length
+    ? r.equipped.map(e => `<li>${e.name} <span class="note">(${e.slot})</span></li>`).join("")
+    : "<li><span class='note'>nothing equipped</span></li>";
+  const rs = r.recruit_state;
+  $("sheet").innerHTML = `
+    <h3>Stats</h3>
+    <div class="stats">
+      ${statRow("HP", s.hp + "/" + s.max_hp)}${statRow("MP", s.mp + "/" + s.max_mp)}
+      ${statRow("Power", s.power)}${statRow("Defense", s.defense)}
+      ${statRow("Speed", s.speed)}${statRow("Resist", s.resist)}
+      ${statRow("Int", s.int)}${statRow("Luck", s.luck)}
+      ${statRow("Next level", s.exp_needed + " exp")}
+    </div>
+    <h3>Equipped</h3><ul class="gear">${gear}</ul>
+    <h3>Magic</h3>
+    <div class="note">Learned-spell mask 0x${r.magic_mask.toString(16).padStart(4, "0")} —
+      spells unresolved pending a runtime trace; names are not guessed.</div>
+    <h3>Recruitment</h3><ul class="recru">
+      <li>Trust: <b>${rs.trust_seed}</b> / 100</li>
+      <li>${rs.recruitable_at_start
+        ? "<span class='ok'>recruitable right now</span>"
+        : "<span class='no'>not recruitable at game start</span> — becomes recruitable when standing idle"}</li>
+      <li>Asks to join: needs trust ≥ ${howto.accept_gate.rule.replace("trust >= ", "")}</li>
+      <li>Willing to talk recruitment: ~30% per meeting (low trust), ~20% (high trust)</li>
+    </ul>`;
+}
+
+function render() {
+  drawLand();
+  const map = $("map");
+  const recruitTowns = new Map(recruits.filter(r => r.location.gx !== null)
+    .map(r => [r.location.gx + "," + r.location.gy, r]));
+  for (const t of towns) {
+    if (recruitTowns.has(t.gx + "," + t.gy)) continue; // recruit marker drawn below
+    const dot = document.createElement("div");
+    dot.className = "town dot";
+    dot.style.left = cellX(t.gx) + "px"; dot.style.top = cellY(t.gy) + "px";
+    dot.title = t.name;
+    map.append(dot);
+  }
+  for (const r of recruits) {
+    if (r.location.gx === null) continue;
+    const px = cellX(r.location.gx), py = cellY(r.location.gy);
+    const dot = document.createElement("div");
+    dot.className = "town recruit" + (r === selected ? " sel" : "");
+    dot.style.left = px + "px"; dot.style.top = py + "px";
+    dot.title = `${r.name} — ${r.location.name}`;
+    dot.addEventListener("click", () => { showRecruit(r); render(); });
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.innerHTML = `${r.name} <span class="at">@${r.location.name}</span>`;
+    lab.style.left = px + "px"; lab.style.top = py + "px";
+    lab.addEventListener("click", () => { showRecruit(r); render(); });
+    map.append(lab, dot);
+  }
+  const off = recruits.filter(r => r.location.gx === null);
+  $("offmap").innerHTML = off.length
+    ? "Off-map special site: " + off.map(r =>
+        `<a data-c="${r.character_index}">${r.name}</a> — ${r.location.name}` +
+        ` <span class="note">(special location; no decoded map cell` +
+        (r.location.name_status !== "confirmed" ? ", name unverified" : "") + `)</span>`).join(" · ")
+    : "";
+  for (const a of $("offmap").querySelectorAll("a"))
+    a.addEventListener("click", () => {
+      showRecruit(recruits.find(r => r.character_index === Number(a.dataset.c)));
+      render();
+    });
+}
+
+towns = (await (await fetch("towns.json")).json()).towns;
+grid = await (await fetch("japan-grid.json")).json();
+const data = await (await fetch("recruits.json")).json();
+recruits = data.recruits;
+howto = data.how_to_recruit;
+render();
+</script>
+</body>
+</html>
