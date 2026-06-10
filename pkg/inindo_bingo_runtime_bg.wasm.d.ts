@@ -1,0 +1,31 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const __wbg_wasmbingoround_free: (a: number, b: number) => void;
+export const __wbg_wasmbingoruntime_free: (a: number, b: number) => void;
+export const wasmbingoround_applySelection: (a: number, b: number) => [number, number, number, number];
+export const wasmbingoround_boardNumbers: (a: number) => [number, number];
+export const wasmbingoround_buyChips: (a: number, b: number) => [number, number];
+export const wasmbingoround_c421: (a: number) => number;
+export const wasmbingoround_chips: (a: number) => number;
+export const wasmbingoround_fromStateBytes: (a: number, b: number, c: number) => [number, number, number];
+export const wasmbingoround_gold: (a: number) => number;
+export const wasmbingoround_marks: (a: number) => [number, number];
+export const wasmbingoround_pendingSelections: (a: number) => number;
+export const wasmbingoround_phaseCode: (a: number) => number;
+export const wasmbingoround_rearm: (a: number) => [number, number];
+export const wasmbingoround_resolveRound: (a: number) => [number, number, number, number];
+export const wasmbingoround_startRound: (a: number, b: number) => [number, number, number];
+export const wasmbingoround_stateBytes: (a: number) => [number, number];
+export const wasmbingoround_stepTurn: (a: number) => [number, number, number, number];
+export const wasmbingoround_wager: (a: number) => number;
+export const wasmbingoruntime_entryTextPointer: (a: number) => number;
+export const wasmbingoruntime_fromStateBytes: (a: number, b: number) => [number, number, number];
+export const wasmbingoruntime_quoteChipPurchaseCode: (a: number, b: number) => number;
+export const wasmbingoruntime_stateBytes: (a: number) => [number, number];
+export const wasmbingoruntime_selectedChips: (a: number) => number;
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_start: () => void;

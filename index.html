@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inindo Bingo — rebuilt logic, playable</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 460px; margin: 2rem auto; padding: 0 1rem; background: #101018; color: #e8e8f0; text-align: center; }
+  h1 { font-size: 1.1rem; color: #8cf; }
+  #called { font-size: 1.6rem; min-height: 2.2rem; color: #ffd479; font-weight: bold; }
+  #card { display: grid; grid-template-columns: repeat(5, 64px); gap: 6px; justify-content: center; margin: 1rem auto; }
+  .cell { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; border: 2px solid #445; border-radius: 8px; background: #1c2230; transition: background .2s, border-color .2s; }
+  .cell.marked { background: #b4452a; border-color: #ffd479; color: #fff; }
+  .cell.pickable { border-color: #6f6; cursor: pointer; }
+  .cell.pickable:hover { background: #2a4a2a; }
+  #status { display: flex; justify-content: space-around; margin: .6rem 0; font-size: 1.05rem; }
+  #status strong { color: #ffd479; }
+  #message { min-height: 1.6rem; color: #9ad; }
+  #controls { margin: .8rem 0; }
+  input { width: 5rem; background: #2a2a38; color: #e8e8f0; border: 1px solid #556; border-radius: 4px; padding: .3rem .5rem; font-size: 1rem; }
+  button { background: #2c4a72; color: #e8e8f0; border: 1px solid #58c; border-radius: 6px; padding: .35rem 1.1rem; font-size: 1rem; cursor: pointer; margin: 0 .3rem; }
+  button:disabled { opacity: .4; cursor: default; }
+  #error { color: #ff7a7a; white-space: pre-wrap; }
+  #reset { font-size: .75rem; color: #668; }
+</style>
+</head>
+<body>
+<h1>ININDO BINGO — rebuilt game logic (WASM)</h1>
+<div id="called">&nbsp;</div>
+<div id="card"></div>
+<!-- B45A wager-prompt render order: balance prints before the bet field. -->
+<div id="status">
+  <span>Gold <strong id="gold">0</strong></span>
+  <span>Chips <strong id="chips">0</strong></span>
+  <span>Wager <strong id="wager">0</strong></span>
+</div>
+<div id="controls">
+  <!-- Counter: gold buys chips at the parlor price ($10 low / $100 high). -->
+  <span id="counterBox">
+    Buy <input id="buyQty" type="number" value="10" min="1" max="9999"> chips
+    <button id="buy">Buy</button>
+  </span>
+  <span id="wagerBox">
+    Bet <input id="bet" type="number" value="10" min="1" max="65535">
+    <button id="start">Play</button>
+  </span>
+  <span id="replayBox" hidden>
+    Play again? <button id="yes">Yes</button> <button id="no">No</button>
+  </span>
+</div>
+<div id="message">&nbsp;</div>
+<p id="error"></p>
+<p id="reset"><a href="#" id="resetLink">reset saved game</a></p>
+
+<fieldset id="knobs" style="text-align:left;border:1px solid #345;border-radius:6px;font-size:.85rem">
+  <legend style="color:#8cf">Game state
+    <label style="font-weight:normal"><input id="devMode" type="checkbox"> dev mode (edit + lock)</label>
+  </legend>
+  <div id="knobGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.2rem .8rem"></div>
+  <div style="margin-top:.4rem">
+    <button id="applyKnobs" disabled>Apply &amp; lock state</button>
+    <span id="knobNote" style="color:#9aa;font-size:.8rem">Same locked state + same picks ⇒ identical round (deterministic engine).</span>
+  </div>
+</fieldset>
+
+<script type="module">
+import init, { WasmBingoRound } from "./pkg/inindo_bingo_runtime.js";
+
+const $ = (id) => document.getElementById(id);
+const SERIALIZED_STATE_LEN = 66;
+const SAVE_KEY = "inindo-bingo-save-v1";
+
+// Paraphrased event labels keyed by decoded result; original game text is
+// not reproduced (this build is an independent reconstruction of mechanics).
+const TEXTS = {
+  0xC662: "Free pick — choose a square!",
+  0xC686: "Four corners hit!",
+  0xC69C: "Choose any three squares!",
+  0xC6B2: "Inner block cleared!",
+  0xC6C4: "Skeleton — turn ends!",
+  0xC6E7: "Super bonus!",
+};
+
+// Persistent progression (user request): chips, RNG state, and the
+// cross-round C421 jackpot flag survive page reloads via localStorage.
+function loadSave() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const { state, c421 } = JSON.parse(raw);
+    if (!Array.isArray(state) || state.length !== SERIALIZED_STATE_LEN) return null;
+    return { state: new Uint8Array(state), c421: c421 & 0xff };
+  } catch {
+    return null;
+  }
+}
+
+function persist() {
+  try {
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify({ state: [...round.stateBytes()], c421: round.c421() }),
+    );
+  } catch {}
+}
+
+function freshStateBytes() {
+  const b = new Uint8Array(SERIALIZED_STATE_LEN);
+  const dv = new DataView(b.buffer);
+  // First-visit seed varies per player; afterwards the save carries the
+  // exact RNG progression like a console left powered on.
+  dv.setUint32(0, (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0 || 1, true);
+  dv.setUint16(8, 0, true); // chips start at 0 — buy them at the counter
+  dv.setUint16(12, 1000, true); // gold (buys 100 low-class chips at $10 each)
+  b[14] = 1; b[15] = 1;
+  b[16] = 0; // low class
+  b[19] = 2; // generator (odds) class
+  return b;
+}
+
+let round = null;
+let c421 = 0;
+let cells = [];
+let animFrames = 0;
+let running = false;
+let picking = false;
+
+function buildCard() {
+  const card = $("card");
+  card.replaceChildren();
+  cells = [...round.boardNumbers()].map((n, i) => {
+    const div = document.createElement("div");
+    div.className = "cell";
+    div.textContent = n;
+    div.addEventListener("click", () => pickCell(i));
+    card.append(div);
+    return div;
+  });
+}
+
+// State knobs: every serialized field, always visible; editable in dev mode.
+// Layout per BingoState::to_serialized_bytes (runtime.rs).
+const KNOBS = [
+  ["rng_state", 0, 4, "hex"], ["frame", 4, 4, "dec"],
+  ["low_chips", 8, 2, "dec"], ["high_chips", 10, 2, "dec"],
+  ["gold", 12, 2, "dec"], ["month", 14, 1, "dec"], ["day", 15, 1, "dec"],
+  ["chip_class", 16, 1, "dec"], ["c9c2_bits", 17, 1, "hex"],
+  ["c9c3_rows", 18, 1, "hex"], ["odds_class", 19, 1, "dec"],
+  ["c9d1_flag", 20, 1, "hex"],
+];
+
+function paintKnobs() {
+  const grid = $("knobGrid");
+  const bytes = new Uint8Array(round.stateBytes());
+  const dv = new DataView(bytes.buffer);
+  const get = (off, len) =>
+    len === 4 ? dv.getUint32(off, true) : len === 2 ? dv.getUint16(off, true) : dv.getUint8(off);
+  const dev = $("devMode").checked;
+  // Dev mode freezes the view for editing; live refresh only when off.
+  if (dev && grid.childElementCount > 0) {
+    $("applyKnobs").disabled = false;
+    for (const input of grid.querySelectorAll("input")) input.disabled = false;
+    return;
+  }
+  grid.replaceChildren();
+  for (const [name, off, len, fmt] of [...KNOBS, ["c421_jackpot", -1, 1, "hex"]]) {
+    const value = off >= 0 ? get(off, len) : round.c421();
+    const label = document.createElement("label");
+    label.textContent = name + " ";
+    const input = document.createElement("input");
+    input.id = "knob_" + name;
+    input.value = fmt === "hex" ? value.toString(16).toUpperCase() : value;
+    input.dataset.fmt = fmt;
+    input.disabled = !dev;
+    input.style.width = "5.5rem";
+    label.append(input);
+    grid.append(label);
+  }
+  $("applyKnobs").disabled = !dev;
+}
+
+function applyKnobs() {
+  try {
+    const b = new Uint8Array(round.stateBytes());
+    const dv = new DataView(b.buffer);
+    for (const [name, off, len, fmt] of KNOBS) {
+      const raw = document.getElementById("knob_" + name).value;
+      const v = fmt === "hex" ? parseInt(raw, 16) : Number(raw);
+      if (len === 4) dv.setUint32(off, v >>> 0, true);
+      else if (len === 2) dv.setUint16(off, v & 0xffff, true);
+      else dv.setUint8(off, v & 0xff);
+    }
+    c421 = parseInt(document.getElementById("knob_c421_jackpot").value, 16) & 0xff;
+    round = WasmBingoRound.fromStateBytes(b, c421);
+    running = false;
+    picking = false;
+    buildCard();
+    paint();
+    persist();
+    $("message").textContent = "State locked. Same inputs now replay identically.";
+    $("wagerBox").hidden = false; $("counterBox").hidden = false;
+    $("replayBox").hidden = true;
+    $("error").textContent = "";
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+}
+
+function paint() {
+  const marks = round.marks();
+  cells.forEach((cell, i) => {
+    cell.classList.toggle("marked", marks[i] === 1);
+    cell.classList.toggle("pickable", picking && marks[i] === 0);
+  });
+  $("gold").textContent = round.gold();
+  $("chips").textContent = round.chips();
+  $("wager").textContent = round.wager();
+  paintKnobs();
+}
+
+function pickCell(i) {
+  if (!picking || round.marks()[i] === 1) return;
+  try {
+    round.applySelection(i);
+    if (round.pendingSelections() === 0) {
+      picking = false;
+      $("message").textContent = " ";
+      running = true;
+      animFrames = turnDelayFrames(5);
+      requestAnimationFrame(frame);
+    } else {
+      $("message").textContent = `Pick ${round.pendingSelections()} more.`;
+    }
+    paint();
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+}
+
+// Decoded $BBBB pacing profile params: speed x |step| frames per call at
+// 60fps (frame-exactness pending a BizHawk trace, tracked on the ticket).
+function turnDelayFrames(profile) {
+  const params = { 5: [2, 4, 2, -8], 20: [2, 8, 2, -4], 100: [2, 16, 2, -2] }[profile];
+  return params ? params[1] * Math.abs(params[3]) : 32;
+}
+
+function frame() {
+  if (!running) return;
+  if (animFrames > 0) {
+    animFrames -= 1;
+    requestAnimationFrame(frame);
+    return;
+  }
+  try {
+    const r = round.stepTurn();
+    const [kind, , number, , c9c2, , fullBoard, profile, , fbLo, fbHi] = r;
+    const textPtr = fbLo | (fbHi << 8);
+    if (kind === 0) {
+      $("called").textContent = `Number ${number}!`;
+      if (c9c2 !== 0) $("message").textContent = "Line!";
+    } else if (kind === 1) {
+      $("called").textContent = "✦";
+      if (TEXTS[textPtr]) $("message").textContent = TEXTS[textPtr];
+      if (round.phaseCode() === 4) {
+        // Player-selection specials: the player picks square(s).
+        running = false;
+        picking = true;
+        paint();
+        return;
+      }
+    } else {
+      running = false;
+      finishRound();
+      return;
+    }
+    if (fullBoard) $("message").textContent = "BINGO!";
+    paint();
+    animFrames = turnDelayFrames(profile);
+    requestAnimationFrame(frame);
+  } catch (e) {
+    running = false;
+    $("error").textContent = String(e);
+  }
+}
+
+function finishRound() {
+  try {
+    const [paid, aLo, aHi, , , replayPrompted] = round.resolveRound();
+    const amount = aLo | (aHi << 8);
+    $("message").textContent = paid ? `Payout: ${amount} chips!` : "No win this round.";
+    paint();
+    persist();
+    if (replayPrompted && round.chips() > 0) {
+      $("replayBox").hidden = false;
+    } else {
+      $("wagerBox").hidden = false; $("counterBox").hidden = false;
+    }
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+}
+
+// Counter: convert gold to chips at the parlor price before wagering.
+// Result buffer: [outcome 0=bought/1=rejected/2=wrong-phase, code, cost16, chips16, gold16].
+const BUY_REJECT = { 1: "Buy at least one chip.", 2: "Too many chips!", 3: "You don't have enough gold." };
+function buyChips() {
+  $("error").textContent = "";
+  const qty = Number($("buyQty").value) | 0;
+  try {
+    const r = round.buyChips(qty);
+    if (r[0] === 0) {
+      const cost = r[2] | (r[3] << 8);
+      $("message").textContent = `Bought ${qty} chips for ${cost} gold.`;
+    } else if (r[0] === 1) {
+      $("message").textContent = BUY_REJECT[r[1]] ?? "The counter declines.";
+    } else {
+      $("message").textContent = "Finish this round before buying more.";
+    }
+    paint();
+    persist();
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+}
+
+function startRound() {
+  $("error").textContent = "";
+  const wager = Number($("bet").value) | 0;
+  if (round.chips() === 0) {
+    $("message").textContent = "No chips to bet — buy some with gold first.";
+    return;
+  }
+  try {
+    if (!round.startRound(wager)) {
+      $("message").textContent = "The house refuses that bet.";
+      return;
+    }
+    $("wagerBox").hidden = true; $("counterBox").hidden = true;
+    $("replayBox").hidden = true;
+    $("message").textContent = " ";
+    paint();
+    persist();
+    running = true;
+    animFrames = turnDelayFrames(100); // decoded round-entry pacing profile
+    requestAnimationFrame(frame);
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+}
+
+function rebuildFromResolved() {
+  c421 = round.c421();
+  round.rearm(); // clears recognition bits before the state carries over
+  const carried = new Uint8Array(round.stateBytes());
+  round = WasmBingoRound.fromStateBytes(carried, c421);
+  persist();
+  buildCard();
+  paint();
+  $("called").textContent = " ";
+}
+
+await init();
+const save = loadSave();
+c421 = save ? save.c421 : 0;
+round = WasmBingoRound.fromStateBytes(save ? save.state : freshStateBytes(), c421);
+buildCard();
+paint();
+
+$("buy").addEventListener("click", buyChips);
+$("start").addEventListener("click", startRound);
+$("yes").addEventListener("click", () => {
+  try {
+    rebuildFromResolved();
+    $("replayBox").hidden = true;
+    $("wagerBox").hidden = false; $("counterBox").hidden = false;
+    $("message").textContent = " ";
+  } catch (e) {
+    $("error").textContent = String(e);
+  }
+});
+$("no").addEventListener("click", () => {
+  try {
+    rebuildFromResolved();
+  } catch {}
+  $("replayBox").hidden = true;
+  $("wagerBox").hidden = false; $("counterBox").hidden = false;
+  $("message").textContent = "Come back any time.";
+});
+$("resetLink").addEventListener("click", (e) => {
+  e.preventDefault();
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+});
+$("devMode").addEventListener("change", paintKnobs);
+$("applyKnobs").addEventListener("click", applyKnobs);
+</script>
+<footer style="margin-top:2rem;padding-top:1rem;border-top:1px solid #334;color:#778;font-size:.78rem;line-height:1.5;text-align:center">
+  Made for educational and research purposes only. This is an independent,
+  unaffiliated reverse-engineering project that reconstructs game <em>mechanics</em>
+  in original code; it contains no game ROM, graphics, audio, or original text.
+  <em>Inindo: Way of the Ninja</em> and all original game content are
+  © <a href="https://en.wikipedia.org/wiki/Koei" style="color:#9ab">Koei</a>
+  (now Koei Tecmo Games). Not endorsed by or affiliated with the rights holders.
+</footer>
+</body>
+</html>
