@@ -1,0 +1,725 @@
+{
+ "schema": "inindo.recruit-finder.v1",
+ "recruits": [
+  {
+   "character_index": 11,
+   "name": "Hanzo",
+   "class": "Fuma ninja",
+   "location": {
+    "index": 11,
+    "kind": "province",
+    "name": "Mikawa",
+    "name_status": "confirmed",
+    "gx": 23,
+    "gy": 23,
+    "px": 0.6467,
+    "py": 0.6467
+   },
+   "stats": {
+    "max_hp": 43,
+    "hp": 43,
+    "max_mp": 18,
+    "mp": 18,
+    "exp_needed": 108,
+    "level": 5,
+    "int": 25,
+    "speed": 22,
+    "luck": 12,
+    "defense": 6,
+    "resist": 6,
+    "power": 24
+   },
+   "equipped": [
+    {
+     "id": 22,
+     "name": "Steel Helm",
+     "slot": "head"
+    },
+    {
+     "id": 34,
+     "name": "Light Mail",
+     "slot": "body"
+    },
+    {
+     "id": 17,
+     "name": "Steel Blade",
+     "slot": "melee"
+    },
+    {
+     "id": 51,
+     "name": "8 pt. Star",
+     "slot": "thrown"
+    }
+   ],
+   "magic_mask": 513,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 15,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 18,
+   "name": "Tenkai",
+   "class": "Koga ninja",
+   "location": {
+    "index": 4,
+    "kind": "province",
+    "name": "Hitachi",
+    "name_status": "confirmed",
+    "gx": 31,
+    "gy": 17,
+    "px": 0.8813,
+    "py": 0.4707
+   },
+   "stats": {
+    "max_hp": 38,
+    "hp": 38,
+    "max_mp": 20,
+    "mp": 20,
+    "exp_needed": 45,
+    "level": 3,
+    "int": 20,
+    "speed": 8,
+    "luck": 12,
+    "defense": 10,
+    "resist": 10,
+    "power": 12
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 9,
+     "name": "Gold Staff",
+     "slot": "melee"
+    },
+    {
+     "id": 62,
+     "name": "Scarab",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 3,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 19,
+   "name": "Kyonyo",
+   "class": "Mendicant",
+   "location": {
+    "index": 5,
+    "kind": "province",
+    "name": "Echigo",
+    "name_status": "confirmed",
+    "gx": 25,
+    "gy": 15,
+    "px": 0.7053,
+    "py": 0.412
+   },
+   "stats": {
+    "max_hp": 35,
+    "hp": 35,
+    "max_mp": 22,
+    "mp": 22,
+    "exp_needed": 45,
+    "level": 3,
+    "int": 16,
+    "speed": 10,
+    "luck": 10,
+    "defense": 8,
+    "resist": 8,
+    "power": 10
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 60,
+     "name": "Amulet",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 3,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 25,
+   "name": "Suzaku",
+   "class": "Hermit",
+   "location": {
+    "index": 28,
+    "kind": "province",
+    "name": "Hizen",
+    "name_status": "confirmed",
+    "gx": 3,
+    "gy": 28,
+    "px": 0.06,
+    "py": 0.7933
+   },
+   "stats": {
+    "max_hp": 35,
+    "hp": 35,
+    "max_mp": 15,
+    "mp": 15,
+    "exp_needed": 15,
+    "level": 1,
+    "int": 13,
+    "speed": 8,
+    "luck": 10,
+    "defense": 4,
+    "resist": 6,
+    "power": 10
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 9,
+     "name": "Gold Staff",
+     "slot": "melee"
+    },
+    {
+     "id": 61,
+     "name": "Talisman",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 1,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 26,
+   "name": "Bishamon",
+   "class": "Sage",
+   "location": {
+    "index": 37,
+    "kind": "special",
+    "name": "Hyuga",
+    "name_status": "ordering_hypothesis_high_confidence",
+    "gx": null,
+    "gy": null,
+    "px": null,
+    "py": null,
+    "coords_note": "no static special-index->(x,y) table exists (overworld-locations.md); position not guessed"
+   },
+   "stats": {
+    "max_hp": 36,
+    "hp": 36,
+    "max_mp": 16,
+    "mp": 16,
+    "exp_needed": 15,
+    "level": 1,
+    "int": 11,
+    "speed": 10,
+    "luck": 8,
+    "defense": 4,
+    "resist": 6,
+    "power": 11
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 4,
+     "name": "Mace",
+     "slot": "melee"
+    },
+    {
+     "id": 61,
+     "name": "Talisman",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 1,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 49,
+   "name": "Gao",
+   "class": "Negoro ninja",
+   "location": {
+    "index": 6,
+    "kind": "province",
+    "name": "Kozuke",
+    "name_status": "confirmed",
+    "gx": 27,
+    "gy": 17,
+    "px": 0.764,
+    "py": 0.4707
+   },
+   "stats": {
+    "max_hp": 33,
+    "hp": 33,
+    "max_mp": 6,
+    "mp": 6,
+    "exp_needed": 15,
+    "level": 1,
+    "int": 10,
+    "speed": 5,
+    "luck": 11,
+    "defense": 6,
+    "resist": 4,
+    "power": 12
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 9,
+     "name": "Gold Staff",
+     "slot": "melee"
+    }
+   ],
+   "magic_mask": 1,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 51,
+   "name": "Kenko Hosi",
+   "class": "Hermit",
+   "location": {
+    "index": 8,
+    "kind": "province",
+    "name": "Boso",
+    "name_status": "confirmed",
+    "gx": 30,
+    "gy": 21,
+    "px": 0.852,
+    "py": 0.588
+   },
+   "stats": {
+    "max_hp": 22,
+    "hp": 22,
+    "max_mp": 23,
+    "mp": 23,
+    "exp_needed": 15,
+    "level": 1,
+    "int": 17,
+    "speed": 7,
+    "luck": 10,
+    "defense": 7,
+    "resist": 4,
+    "power": 5
+   },
+   "equipped": [
+    {
+     "id": 38,
+     "name": "Surplice",
+     "slot": "body"
+    },
+    {
+     "id": 4,
+     "name": "Mace",
+     "slot": "melee"
+    },
+    {
+     "id": 60,
+     "name": "Amulet",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 1,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  },
+  {
+   "character_index": 52,
+   "name": "Indara",
+   "class": "Mendicant",
+   "location": {
+    "index": 26,
+    "kind": "province",
+    "name": "Tosa",
+    "name_status": "confirmed",
+    "gx": 12,
+    "gy": 27,
+    "px": 0.324,
+    "py": 0.764
+   },
+   "stats": {
+    "max_hp": 35,
+    "hp": 35,
+    "max_mp": 15,
+    "mp": 15,
+    "exp_needed": 15,
+    "level": 1,
+    "int": 13,
+    "speed": 8,
+    "luck": 11,
+    "defense": 4,
+    "resist": 4,
+    "power": 12
+   },
+   "equipped": [
+    {
+     "id": 20,
+     "name": "Helmet",
+     "slot": "head"
+    },
+    {
+     "id": 34,
+     "name": "Light Mail",
+     "slot": "body"
+    },
+    {
+     "id": 9,
+     "name": "Gold Staff",
+     "slot": "melee"
+    },
+    {
+     "id": 61,
+     "name": "Talisman",
+     "slot": "accessory"
+    }
+   ],
+   "magic_mask": 1,
+   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "recruit_state": {
+    "trust_seed": 0,
+    "ai_status": 118,
+    "ai_data0": 0,
+    "recruitable_at_start": false,
+    "note": "not recruitable at game start; becomes recruitable when standing idle (daily AI pass rolls command nibble 7 with ai_data0 0)."
+   }
+  }
+ ],
+ "spell_reference": {
+  "note": "full decoded spell table, reference display only \u2014 NOT per-character learned spells (those are unresolved).",
+  "spells": [
+   {
+    "id": 0,
+    "name": "Flame",
+    "cost": 4,
+    "power": 19
+   },
+   {
+    "id": 1,
+    "name": "Torch",
+    "cost": 8,
+    "power": 41
+   },
+   {
+    "id": 2,
+    "name": "Blaze",
+    "cost": 18,
+    "power": 47
+   },
+   {
+    "id": 3,
+    "name": "Burn",
+    "cost": 16,
+    "power": 57
+   },
+   {
+    "id": 4,
+    "name": "Tiger",
+    "cost": 30,
+    "power": 71
+   },
+   {
+    "id": 5,
+    "name": "Fog",
+    "cost": 8,
+    "power": 31
+   },
+   {
+    "id": 6,
+    "name": "Wind",
+    "cost": 12,
+    "power": 31
+   },
+   {
+    "id": 7,
+    "name": "Storm",
+    "cost": 28,
+    "power": 63
+   },
+   {
+    "id": 8,
+    "name": "Dragon",
+    "cost": 32,
+    "power": 79
+   },
+   {
+    "id": 9,
+    "name": "Repair",
+    "cost": 4,
+    "power": 53
+   },
+   {
+    "id": 10,
+    "name": "Purge",
+    "cost": 5,
+    "power": 25
+   },
+   {
+    "id": 11,
+    "name": "Geyser",
+    "cost": 14,
+    "power": 47
+   },
+   {
+    "id": 12,
+    "name": "Quake",
+    "cost": 24,
+    "power": 63
+   },
+   {
+    "id": 13,
+    "name": "Super",
+    "cost": 62,
+    "power": 67
+   },
+   {
+    "id": 14,
+    "name": "Heal 1",
+    "cost": 5,
+    "power": 9
+   },
+   {
+    "id": 15,
+    "name": "Purge",
+    "cost": 3,
+    "power": 15
+   },
+   {
+    "id": 16,
+    "name": "Heal 2",
+    "cost": 13,
+    "power": 24
+   },
+   {
+    "id": 17,
+    "name": "Heal 3",
+    "cost": 25,
+    "power": 30
+   },
+   {
+    "id": 18,
+    "name": "Heal 4",
+    "cost": 73,
+    "power": 36
+   },
+   {
+    "id": 19,
+    "name": "Guard",
+    "cost": 7,
+    "power": 36
+   },
+   {
+    "id": 20,
+    "name": "Speed",
+    "cost": 6,
+    "power": 48
+   },
+   {
+    "id": 21,
+    "name": "Sleep",
+    "cost": 8,
+    "power": 54
+   },
+   {
+    "id": 22,
+    "name": "Vanish",
+    "cost": 11,
+    "power": 57
+   },
+   {
+    "id": 23,
+    "name": "Wings",
+    "cost": 16,
+    "power": 66
+   },
+   {
+    "id": 24,
+    "name": "Gust",
+    "cost": 7,
+    "power": 78
+   },
+   {
+    "id": 25,
+    "name": "Awaken",
+    "cost": 13,
+    "power": 90
+   },
+   {
+    "id": 26,
+    "name": "Revive",
+    "cost": 32,
+    "power": 102
+   },
+   {
+    "id": 27,
+    "name": "Shield",
+    "cost": 48,
+    "power": 108
+   },
+   {
+    "id": 28,
+    "name": "Dizzy",
+    "cost": 8,
+    "power": 18
+   },
+   {
+    "id": 29,
+    "name": "Drain",
+    "cost": 6,
+    "power": 25
+   },
+   {
+    "id": 30,
+    "name": "Unfog",
+    "cost": 7,
+    "power": 30
+   },
+   {
+    "id": 31,
+    "name": "Ghost",
+    "cost": 9,
+    "power": 35
+   },
+   {
+    "id": 32,
+    "name": "Fright",
+    "cost": 22,
+    "power": 40
+   },
+   {
+    "id": 33,
+    "name": "Move",
+    "cost": 6,
+    "power": 40
+   },
+   {
+    "id": 34,
+    "name": "Fiero",
+    "cost": 7,
+    "power": 45
+   },
+   {
+    "id": 35,
+    "name": "Remedy",
+    "cost": 8,
+    "power": 50
+   },
+   {
+    "id": 36,
+    "name": "Gale",
+    "cost": 14,
+    "power": 55
+   },
+   {
+    "id": 37,
+    "name": "Weaken",
+    "cost": 7,
+    "power": 60
+   },
+   {
+    "id": 38,
+    "name": "Jinx",
+    "cost": 10,
+    "power": 70
+   },
+   {
+    "id": 39,
+    "name": "Freeze",
+    "cost": 16,
+    "power": 80
+   },
+   {
+    "id": 40,
+    "name": "Ogre",
+    "cost": 24,
+    "power": 85
+   },
+   {
+    "id": 41,
+    "name": "Giant",
+    "cost": 34,
+    "power": 90
+   }
+  ]
+ },
+ "how_to_recruit": {
+  "accept_gate": {
+   "rule": "trust >= randr(6) + 60",
+   "trust_base": 60,
+   "randr_modulus": 6
+  },
+  "willingness": {
+   "low_trust": "randr(10) < 3 (~30%)",
+   "high_trust": "randr(5) == 0 (~20%)"
+  },
+  "pre_gate": "NPC standing idle at its location: (ai_status & 0x0F) == 7 and ai_data0 == 0",
+  "source": "crates/inindo-recruit-runtime/src/plans.rs (byte-decoded msovl2 talk path)"
+ },
+ "field_provenance": {
+  "recruits[].stats|equipped|magic_mask|recruit_state": "new-game seed image ROM file 0x00EFEE+0xB4+idx*0x20 (character-base-stats.md; = $7E:F0B4 at new game)",
+  "recruits[].name|class": "name table file 0x014008 stride 0x10 (+0x04 name, +0x02 b2); class_offset 0x00BAAA + class strings 0x00BAAE",
+  "recruits[].equipped[].name": "item table file 0x01DBBF stride 0x11; slot from equipment stat table 0x01E4E8 (+4 & 7)",
+  "recruits[].location": "seed occupant-chain walk (location[48] at 0x00EFEE+0xB38); 0-29 = provinces (confirmed, town-building-records-bingo-locations.md section 4), 30-47 = specials 0-17 (ordering hypothesis, high confidence); province cells from $05:B320 (file 0x02B320), cross-checked against towns.json (casino-map legs)",
+  "spell_reference": "spell table file 0x01484E stride 0x0A (42 entries)",
+  "how_to_recruit": "crates/inindo-recruit-runtime/src/plans.rs constants",
+  "evidence_record": "work/source-reconstruction/recruit-runtime-investigation.md"
+ }
+}
