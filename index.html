@@ -24,11 +24,20 @@
   button:disabled { opacity: .4; cursor: default; }
   #error { color: #ff7a7a; white-space: pre-wrap; }
   #reset { font-size: .75rem; color: #668; }
+  .sitenav { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; margin: .1rem 0 1rem; font-size: .85rem; }
+  .sitenav a { color: #8cf; text-decoration: none; padding: .22rem .75rem; border: 1px solid #345; border-radius: 999px; background: #161c2c; }
+  .sitenav a:hover { border-color: #8cf; background: #1c2840; }
+  .sitenav a[aria-current="page"] { color: #ffd479; border-color: #a86; background: #262030; }
 </style>
 </head>
 <body>
 <h1>ININDO BINGO — rebuilt game logic (WASM)</h1>
-<p style="text-align:center;margin-top:-.4rem"><a href="map.html" style="color:#8cf;font-size:.85rem">🗾 casino map of Japan →</a> · <a href="recruits.html" style="color:#8cf;font-size:.85rem">🥷 recruit finder →</a> · <a href="https://banon-labs.github.io/inindo-atlas/" style="color:#8cf;font-size:.85rem">🗺️ map atlas →</a></p>
+<nav class="sitenav">
+  <a href="index.html" aria-current="page">🎰 play bingo</a>
+  <a href="map.html">🗾 casino map</a>
+  <a href="recruits.html">🥷 recruit finder</a>
+  <a href="https://banon-labs.github.io/inindo-atlas/">🗺️ map atlas</a>
+</nav>
 <div id="called">&nbsp;</div>
 <div id="hint">&nbsp;</div>
 <div id="card"></div>

@@ -40,7 +40,10 @@ test("bingo full-feature demo", async ({ page }) => {
   await shot(page, "03-bought-chips");
 
   // --- Wager and play the tap-driven spinner round ---
+  // Read the balance BEFORE Play: the wager is deducted the moment the round
+  // starts, so a later read would already include the forfeit.
   await page.locator("#bet").fill("10");
+  const chipsBefore = Number(await page.locator("#chips").textContent());
   await page.locator("#start").click();
 
   // The wheel free-runs (spinning) but nothing marks until the player taps.
@@ -67,7 +70,6 @@ test("bingo full-feature demo", async ({ page }) => {
   // Tap (Space) to daub the shown number; drive any free-selection specials by
   // clicking pickable squares; keep going until the round resolves. Track the
   // "N left" budget so we can assert it counts down from 9.
-  const chipsBefore = Number(await page.locator("#chips").textContent());
   let budgetMin = 9;
   let sawCountdown = false;
   let prevBudget = 9;
@@ -108,8 +110,15 @@ test("bingo full-feature demo", async ({ page }) => {
   expect(
     await page.evaluate(() => document.querySelectorAll("#card .cell.marked").length),
   ).toBeGreaterThanOrEqual(1);
+  // A win pays out on top of the forfeited wager; a loss costs exactly the
+  // wager. The tap timing is real-time, so either outcome is legitimate.
+  const outcome = await page.locator("#message").textContent();
   const chipsAfter = Number(await page.locator("#chips").textContent());
-  expect(chipsAfter).not.toBe(chipsBefore);
+  if (/BINGO/.test(outcome)) {
+    expect(chipsAfter).toBeGreaterThan(chipsBefore - 10);
+  } else {
+    expect(chipsAfter).toBe(chipsBefore - 10);
+  }
   await shot(page, "05-round-result");
 
   // --- Casino map of Japan ---

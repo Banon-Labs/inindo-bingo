@@ -28,11 +28,21 @@
   .legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 .25rem 0 .9rem; vertical-align: middle; }
   a { color: #8cf; }
   footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #334; color: #778; font-size: .76rem; line-height: 1.5; text-align: center; }
+  .sitenav { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; margin: .1rem 0 1rem; font-size: .85rem; }
+  .sitenav a { color: #8cf; text-decoration: none; padding: .22rem .75rem; border: 1px solid #345; border-radius: 999px; background: #161c2c; }
+  .sitenav a:hover { border-color: #8cf; background: #1c2840; }
+  .sitenav a[aria-current="page"] { color: #ffd479; border-color: #a86; background: #262030; }
 </style>
 </head>
 <body>
 <h1>ININDO CASINO MAP — every parlor, real entry rules</h1>
-<p class="sub">Town positions, the island silhouette, and parlor rules are all derived from the decoded game data. Click a casino town. · <a href="recruits.html">recruit finder</a> · <a href="https://banon-labs.github.io/inindo-atlas/">map atlas</a> · <a href="index.html">play a round →</a></p>
+<nav class="sitenav">
+  <a href="index.html">🎰 play bingo</a>
+  <a href="map.html" aria-current="page">🗾 casino map</a>
+  <a href="recruits.html">🥷 recruit finder</a>
+  <a href="https://banon-labs.github.io/inindo-atlas/">🗺️ map atlas</a>
+</nav>
+<p class="sub">Town positions, the island silhouette, and parlor rules are all derived from the decoded game data. Click a casino town.</p>
 <div id="wrap">
   <div id="map"></div>
   <div id="panel">
