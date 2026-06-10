@@ -1,0 +1,322 @@
+{
+ "towns": [
+  {
+   "id": 0,
+   "name": "Mutsu",
+   "px": 0.94,
+   "py": 0.06,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 1,
+   "name": "Dewa",
+   "px": 0.852,
+   "py": 0.2653,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 2,
+   "name": "Rikuchu",
+   "px": 0.8813,
+   "py": 0.324,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 3,
+   "name": "Rikuzen",
+   "px": 0.852,
+   "py": 0.3533,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 4,
+   "name": "Hitachi",
+   "px": 0.8813,
+   "py": 0.4707,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 5,
+   "name": "Echigo",
+   "px": 0.7053,
+   "py": 0.412,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 6,
+   "name": "Kozuke",
+   "px": 0.764,
+   "py": 0.4707,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 7,
+   "name": "Sagami",
+   "px": 0.7933,
+   "py": 0.588,
+   "casino": true,
+   "parlors": [
+    "low",
+    "high"
+   ],
+   "chip_price": {
+    "low": 10,
+    "high": 100
+   },
+   "high_entry_gold_min": 3000
+  },
+  {
+   "id": 8,
+   "name": "Boso",
+   "px": 0.852,
+   "py": 0.588,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 9,
+   "name": "Kai",
+   "px": 0.676,
+   "py": 0.5293,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 10,
+   "name": "Totomi",
+   "px": 0.7053,
+   "py": 0.6173,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 11,
+   "name": "Mikawa",
+   "px": 0.6467,
+   "py": 0.6467,
+   "casino": true,
+   "parlors": [
+    "low",
+    "high"
+   ],
+   "chip_price": {
+    "low": 10,
+    "high": 100
+   },
+   "high_entry_gold_min": 3000
+  },
+  {
+   "id": 12,
+   "name": "Etchu",
+   "px": 0.6173,
+   "py": 0.4413,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 13,
+   "name": "Mino",
+   "px": 0.588,
+   "py": 0.5587,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 14,
+   "name": "Echizen",
+   "px": 0.5587,
+   "py": 0.5,
+   "casino": true,
+   "parlors": [
+    "low",
+    "high"
+   ],
+   "chip_price": {
+    "low": 10,
+    "high": 100
+   },
+   "high_entry_gold_min": 3000
+  },
+  {
+   "id": 15,
+   "name": "Omi",
+   "px": 0.5,
+   "py": 0.676,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 16,
+   "name": "Ise",
+   "px": 0.5293,
+   "py": 0.7053,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 17,
+   "name": "Yamashiro",
+   "px": 0.4707,
+   "py": 0.6173,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 18,
+   "name": "Tanba",
+   "px": 0.412,
+   "py": 0.5587,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 19,
+   "name": "Settsu",
+   "px": 0.4707,
+   "py": 0.6467,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 20,
+   "name": "Kii",
+   "px": 0.4707,
+   "py": 0.7053,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 21,
+   "name": "Harima",
+   "px": 0.412,
+   "py": 0.6173,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 22,
+   "name": "Izumo",
+   "px": 0.324,
+   "py": 0.588,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 23,
+   "name": "Bitchu",
+   "px": 0.2947,
+   "py": 0.676,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 24,
+   "name": "Aki",
+   "px": 0.2067,
+   "py": 0.676,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 25,
+   "name": "Iyo",
+   "px": 0.2653,
+   "py": 0.7347,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 26,
+   "name": "Tosa",
+   "px": 0.324,
+   "py": 0.764,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 27,
+   "name": "Bungo",
+   "px": 0.1187,
+   "py": 0.764,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 28,
+   "name": "Hizen",
+   "px": 0.06,
+   "py": 0.7933,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  },
+  {
+   "id": 29,
+   "name": "Satsuma",
+   "px": 0.06,
+   "py": 0.94,
+   "casino": false,
+   "parlors": [],
+   "chip_price": {},
+   "high_entry_gold_min": null
+  }
+ ]
+}

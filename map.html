@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inindo Bingo — casino map of Japan</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 1.5rem auto; padding: 0 1rem; background: #101018; color: #e8e8f0; }
+  h1 { font-size: 1.1rem; color: #8cf; text-align: center; }
+  .sub { text-align: center; color: #9aa; font-size: .85rem; margin-top: -.3rem; }
+  #wrap { display: flex; gap: 1rem; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  #map { position: relative; background:
+    radial-gradient(circle at 60% 55%, #24506e 0%, #173049 70%, #101c2c 100%);
+    border: 2px solid #3a5570; border-radius: 10px; }
+  .town { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; box-sizing: border-box; }
+  .dot { width: 9px; height: 9px; background: #5b6b7d; border: 1px solid #1a2430; }
+  .casino { width: 16px; height: 16px; cursor: pointer; border: 2px solid #0c1118; }
+  .casino.low { background: #4a8edb; } .casino.high { background: #ffd479; }
+  .casino:hover { border-color: #fff; }
+  .casino.sel { border-color: #6f6; box-shadow: 0 0 6px #6f6; }
+  .label { position: absolute; transform: translate(-50%, 6px); font-size: .62rem; color: #cdd; white-space: nowrap; pointer-events: none; text-shadow: 0 1px 2px #000; }
+  #panel { width: 260px; background: #1c2230; border: 1px solid #445; border-radius: 8px; padding: .8rem; min-height: 230px; }
+  #panel h2 { margin: 0 0 .3rem; font-size: 1.05rem; color: #ffd479; }
+  #panel .row { font-size: .9rem; margin: .2rem 0; }
+  label { display: block; margin: .35rem 0; font-size: .88rem; }
+  input, select { background: #2a2a38; color: #e8e8f0; border: 1px solid #556; border-radius: 4px; padding: .15rem .4rem; }
+  input { width: 5rem; }
+  .verdict { margin-top: .5rem; color: #9ad; min-height: 3.2em; font-style: italic; }
+  .verdict.reject { color: #ff9a7a; }
+  .legend { text-align: center; font-size: .8rem; color: #9aa; margin-top: .6rem; }
+  .legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 .25rem 0 .9rem; vertical-align: middle; }
+  a { color: #8cf; }
+  footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #334; color: #778; font-size: .76rem; line-height: 1.5; text-align: center; }
+</style>
+</head>
+<body>
+<h1>ININDO CASINO MAP — every parlor, real entry rules</h1>
+<p class="sub">Town positions and parlor data decoded from the original game. Click a casino town. · <a href="index.html">play a round →</a></p>
+<div id="wrap">
+  <div id="map"></div>
+  <div id="panel">
+    <h2 id="townName">Pick a casino town</h2>
+    <div class="row" id="townInfo">Yellow markers are high-stakes parlors, blue are low-stakes. Grey dots are towns without a casino.</div>
+    <label>Parlor
+      <select id="parlor"><option value="low">Low stakes</option><option value="high">High stakes</option></select>
+    </label>
+    <label>Your gold <input id="gold" type="number" value="50" min="0" max="65535"></label>
+    <label>Your chips <input id="chips" type="number" value="0" min="0" max="65535"></label>
+    <div class="verdict" id="verdict"></div>
+  </div>
+</div>
+<p class="legend"><b style="background:#ffd479"></b>high-stakes <b style="background:#4a8edb"></b>low-stakes <b style="background:#5b6b7d"></b>no casino</p>
+
+<footer>
+  Made for educational and research purposes only. Independent, unaffiliated
+  reverse-engineering of game mechanics; no ROM, graphics, audio, or original
+  text. <em>Inindo: Way of the Ninja</em> and all original game content are
+  © <a href="https://en.wikipedia.org/wiki/Koei">Koei</a> (now Koei Tecmo Games).
+</footer>
+
+<script type="module">
+import init, { WasmBingoRuntime } from "./pkg/inindo_bingo_runtime.js";
+
+const $ = (id) => document.getElementById(id);
+const MAP_W = 380, MAP_H = 420;
+const HIGH_ENTRY_GOLD_MIN = 3000; // decoded high-door gate (runtime-validated)
+
+let towns = [], selected = null;
+
+function stateBytes(highClass) {
+  const b = new Uint8Array(66);
+  const dv = new DataView(b.buffer);
+  dv.setUint16(8, 100, true);
+  dv.setUint16(10, Number($("chips").value) | 0, true);
+  dv.setUint16(12, Number($("gold").value) | 0, true);
+  b[14] = 1; b[15] = 1;
+  b[16] = highClass ? 1 : 0;
+  return b;
+}
+
+function showTown(town) {
+  selected = town;
+  $("townName").textContent = town.name + (town.casino ? " — casino" : "");
+  if (!town.casino) { $("townInfo").textContent = "No bingo parlor here."; $("verdict").textContent = ""; return; }
+  const high = $("parlor").value === "high";
+  const price = high ? town.chip_price.high : town.chip_price.low;
+  $("townInfo").innerHTML =
+    `${high ? "High" : "Low"}-stakes parlor · ${price} gold per chip` +
+    (high ? `<br>High table admits players with ${HIGH_ENTRY_GOLD_MIN}+ gold.` : "");
+  try {
+    const rt = WasmBingoRuntime.fromStateBytes(stateBytes(high));
+    rt.entryTextPointer(); // runs the decoded entry gate on this state
+    const gold = Number($("gold").value) | 0;
+    const rejected = high && gold < HIGH_ENTRY_GOLD_MIN;
+    $("verdict").className = "verdict" + (rejected ? " reject" : "");
+    $("verdict").textContent = rejected
+      ? "The doorman turns you away — this high table is for the wealthy."
+      : high
+        ? "Welcome — the high rollers' table is open to you."
+        : "Welcome in! Buy some chips and take a seat.";
+  } catch (e) { $("verdict").textContent = String(e); }
+}
+
+function render() {
+  const map = $("map");
+  map.style.width = MAP_W + "px"; map.style.height = MAP_H + "px";
+  map.replaceChildren();
+  for (const t of towns) {
+    const px = t.px * MAP_W, py = t.py * MAP_H;
+    const dot = document.createElement("div");
+    if (t.casino) {
+      const high = $("parlor").value === "high";
+      dot.className = "town casino " + (high ? "high" : "low");
+      if (t === selected) dot.classList.add("sel");
+      dot.addEventListener("click", () => { showTown(t); render(); });
+      const lab = document.createElement("div");
+      lab.className = "label"; lab.textContent = t.name;
+      lab.style.left = px + "px"; lab.style.top = py + "px";
+      map.append(lab);
+    } else {
+      dot.className = "town dot";
+    }
+    dot.style.left = px + "px"; dot.style.top = py + "px";
+    dot.title = t.name;
+    map.append(dot);
+  }
+}
+
+await init();
+towns = (await (await fetch("towns.json")).json()).towns;
+render();
+$("parlor").addEventListener("change", () => { render(); if (selected) showTown(selected); });
+for (const el of ["gold", "chips"]) $(el).addEventListener("input", () => selected && showTown(selected));
+</script>
+</body>
+</html>
