@@ -12,8 +12,7 @@
   #land { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
   .town { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; box-sizing: border-box; }
   .dot { width: 9px; height: 9px; background: #5b6b7d; border: 1px solid #1a2430; }
-  .casino { width: 16px; height: 16px; cursor: pointer; border: 2px solid #0c1118; }
-  .casino.low { background: #4a8edb; } .casino.high { background: #ffd479; }
+  .casino { width: 16px; height: 16px; cursor: pointer; border: 2px solid #0c1118; background: #ffb400; box-shadow: 0 0 5px #ffb40088; }
   .casino:hover { border-color: #fff; }
   .casino.sel { border-color: #6f6; box-shadow: 0 0 6px #6f6; }
   .label { position: absolute; transform: translate(-50%, 6px); font-size: .62rem; color: #cdd; white-space: nowrap; pointer-events: none; text-shadow: 0 1px 2px #000; }
@@ -38,7 +37,7 @@
   <div id="map"></div>
   <div id="panel">
     <h2 id="townName">Pick a casino town</h2>
-    <div class="row" id="townInfo">Yellow markers are high-stakes parlors, blue are low-stakes. Grey dots are towns without a casino.</div>
+    <div class="row" id="townInfo">Amber markers are casino towns — each has both a low and a high-stakes parlor. Pick one to see its rules.</div>
     <label>Parlor
       <select id="parlor"><option value="low">Low stakes</option><option value="high">High stakes</option></select>
     </label>
@@ -47,7 +46,7 @@
     <div class="verdict" id="verdict"></div>
   </div>
 </div>
-<p class="legend"><b style="background:#ffd479"></b>high-stakes <b style="background:#4a8edb"></b>low-stakes <b style="background:#5b6b7d"></b>no casino</p>
+<p class="legend"><b style="background:#ffb400"></b>casino town (both stakes) <b style="background:#5b6b7d"></b>no casino</p>
 
 <footer>
   Made for educational and research purposes only. Independent, unaffiliated
@@ -134,8 +133,7 @@ function render() {
     const px = cellX(t.gx), py = cellY(t.gy);
     const dot = document.createElement("div");
     if (t.casino) {
-      const high = $("parlor").value === "high";
-      dot.className = "town casino " + (high ? "high" : "low");
+      dot.className = "town casino"; // every casino town offers both stakes
       if (t === selected) dot.classList.add("sel");
       dot.addEventListener("click", () => { showTown(t); render(); });
       const lab = document.createElement("div");
@@ -155,7 +153,7 @@ await init();
 towns = (await (await fetch("towns.json")).json()).towns;
 grid = await (await fetch("japan-grid.json")).json();
 render();
-$("parlor").addEventListener("change", () => { render(); if (selected) showTown(selected); });
+$("parlor").addEventListener("change", () => { if (selected) showTown(selected); });
 for (const el of ["gold", "chips"]) $(el).addEventListener("input", () => selected && showTown(selected));
 </script>
 </body>
