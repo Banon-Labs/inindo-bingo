@@ -52,7 +52,21 @@
     }
    ],
    "magic_mask": 513,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    },
+    {
+     "id": 9,
+     "name": "Repair",
+     "cost": 4,
+     "power": 53
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 15,
     "ai_status": 118,
@@ -107,7 +121,21 @@
     }
    ],
    "magic_mask": 3,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    },
+    {
+     "id": 1,
+     "name": "Torch",
+     "cost": 8,
+     "power": 41
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -157,7 +185,21 @@
     }
    ],
    "magic_mask": 3,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    },
+    {
+     "id": 1,
+     "name": "Torch",
+     "cost": 8,
+     "power": 41
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -212,7 +254,15 @@
     }
    ],
    "magic_mask": 1,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -268,7 +318,15 @@
     }
    ],
    "magic_mask": 1,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -318,7 +376,15 @@
     }
    ],
    "magic_mask": 1,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -373,7 +439,15 @@
     }
    ],
    "magic_mask": 1,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -433,7 +507,15 @@
     }
    ],
    "magic_mask": 1,
-   "magic_note": "spells unresolved pending runtime trace: the +0x12 mask indexes a per-class spell-id list built at runtime by the magic menu (covl5 $7E:C1E0); the list's ROM origin is unpinned, so no spell names are derived from this mask (recruit-runtime-investigation.md).",
+   "spells": [
+    {
+     "id": 0,
+     "name": "Flame",
+     "cost": 4,
+     "power": 19
+    }
+   ],
+   "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -444,7 +526,7 @@
   }
  ],
  "spell_reference": {
-  "note": "full decoded spell table, reference display only \u2014 NOT per-character learned spells (those are unresolved).",
+  "note": "full decoded spell table; per-character learned spells are recruits[].spells via the identity mapping bit i = spell id i (runtime-proven, spell-list-trace).",
   "spells": [
    {
     "id": 0,

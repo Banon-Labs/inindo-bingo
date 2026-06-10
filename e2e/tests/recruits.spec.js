@@ -25,7 +25,8 @@ test("recruit finder map + character sheet", async ({ page }) => {
   await expect(sheet).toContainText("43/43"); // HP
   await expect(sheet).toContainText("Steel Blade"); // gear as item names
   await expect(sheet).toContainText("0x0201"); // raw magic mask
-  await expect(sheet).toContainText("unresolved"); // no guessed spell names
+  await expect(sheet).toContainText("Flame"); // identity-mapped spells (bit 0)
+  await expect(sheet).toContainText("Repair"); // bit 9 — the runtime anchor
   await expect(sheet).toContainText("not recruitable at game start");
   await page.screenshot({ path: `${SHOTS}/11-hanzo-sheet.png`, animations: "disabled" });
 

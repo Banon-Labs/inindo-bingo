@@ -108,8 +108,12 @@ function showRecruit(r) {
     </div>
     <h3>Equipped</h3><ul class="gear">${gear}</ul>
     <h3>Magic</h3>
-    <div class="note">Learned-spell mask 0x${r.magic_mask.toString(16).padStart(4, "0")} —
-      spells unresolved pending a runtime trace; names are not guessed.</div>
+    ${r.spells.length
+      ? `<ul class="gear">${r.spells.map(sp =>
+          `<li>${sp.name} <span class="note">(MP ${sp.cost}, power ${sp.power})</span></li>`).join("")}</ul>`
+      : `<div class="note">knows no spells</div>`}
+    <div class="note">mask 0x${r.magic_mask.toString(16).padStart(4, "0")},
+      runtime-validated bit→spell identity mapping</div>
     <h3>Recruitment</h3><ul class="recru">
       <li>Trust: <b>${rs.trust_seed}</b> / 100</li>
       <li>${rs.recruitable_at_start
