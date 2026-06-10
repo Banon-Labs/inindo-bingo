@@ -144,7 +144,9 @@ function buildCard() {
 // State knobs: every serialized field, always visible; editable in dev mode.
 // Layout per BingoState::to_serialized_bytes (runtime.rs).
 const KNOBS = [
-  ["rng_state", 0, 4, "hex"], ["frame", 4, 4, "dec"],
+  // offset 4 ("frame") is a non-real reconstruction artifact — not a game field,
+  // not shown. Every knob below maps 1:1 to a real WRAM value.
+  ["rng_state", 0, 4, "hex"],
   ["low_chips", 8, 2, "dec"], ["high_chips", 10, 2, "dec"],
   ["gold", 12, 2, "dec"], ["month", 14, 1, "dec"], ["day", 15, 1, "dec"],
   ["chip_class", 16, 1, "dec"], ["c9c2_bits", 17, 1, "hex"],
@@ -267,8 +269,13 @@ function resumeWheel() {
   running = true;
   stepCounter = 0;
   $("called").classList.add("spinning");
-  $("hint").textContent = "Tap SPACE or the wheel to daub the shown number!";
+  updateBudget();
   requestAnimationFrame(spinFrame);
+}
+
+// The 9-daub call budget ("N left" / $C9D3): complete a line before it runs out.
+function updateBudget() {
+  $("hint").textContent = `${round.daubsRemaining()} left — tap SPACE or the wheel to daub`;
 }
 
 function spinFrame() {
@@ -288,9 +295,11 @@ function daub() {
   if (!running || picking) return;
   try {
     const r = round.tap();
-    const [kind, , , , , , lineDone, , , fbLo, fbHi] = r;
+    // [kind,latched,number,cell,c9c2,c9c3,line,pacing,c420,fb_lo,fb_hi,outcome,daubs_left]
+    const [kind, , , , , , , , , fbLo, fbHi, outcome] = r;
     const textPtr = fbLo | (fbHi << 8);
     paint();
+    updateBudget();
     if (round.phaseCode() === 4) { // Free pick — the player chooses
       running = false;
       picking = true;
@@ -301,11 +310,10 @@ function daub() {
       return;
     }
     if (kind === 1 && TEXTS[textPtr]) $("message").textContent = TEXTS[textPtr];
-    if (lineDone === 1 || round.phaseCode() === 2) {
+    if (round.phaseCode() === 2) { // resolved: a line WIN (outcome 1) or budget LOSS (2)
       running = false;
       $("called").classList.remove("spinning");
-      $("message").textContent = "BINGO!";
-      finishRound();
+      finishRound(outcome === 2);
     }
   } catch (e) {
     running = false;
@@ -320,7 +328,10 @@ function finishRound() {
     $("hint").textContent = " ";
     const [paid, aLo, aHi, , , replayPrompted] = round.resolveRound();
     const amount = aLo | (aHi << 8);
-    $("message").textContent = paid ? `Payout: ${amount} chips!` : "No win this round.";
+    // A completed line pays; an exhausted budget with no line forfeits the wager.
+    $("message").textContent = paid
+      ? `BINGO! Payout: ${amount} chips!`
+      : "Too bad. Better luck next time! (wager lost)";
     paint();
     persist();
     if (replayPrompted && round.chips() > 0) {

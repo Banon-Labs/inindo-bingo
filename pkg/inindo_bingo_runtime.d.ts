@@ -19,6 +19,7 @@ export class WasmBingoRound {
     buyChips(quantity: number): Uint8Array;
     c421(): number;
     chips(): number;
+    daubsRemaining(): number;
     static fromStateBytes(bytes: Uint8Array, c421: number): WasmBingoRound;
     gold(): number;
     marks(): Uint8Array;
@@ -56,6 +57,7 @@ export interface InitOutput {
     readonly wasmbingoround_buyChips: (a: number, b: number) => [number, number];
     readonly wasmbingoround_c421: (a: number) => number;
     readonly wasmbingoround_chips: (a: number) => number;
+    readonly wasmbingoround_daubsRemaining: (a: number) => number;
     readonly wasmbingoround_fromStateBytes: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmbingoround_gold: (a: number) => number;
     readonly wasmbingoround_marks: (a: number) => [number, number];

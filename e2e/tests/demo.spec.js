@@ -1,9 +1,10 @@
 // Full-feature showcase of the Inindo Bingo site: dev-mode seed lock for a
 // deterministic round, the gold -> chips -> wager loop, the tap-driven spinner
 // round (the wheel free-runs; the player presses Space / clicks the wheel to
-// daub the shown number, and picks squares on free-selection specials), and the
-// clickable casino map including Mikawa's high-stakes rejection. Records video
-// + ordered screenshots.
+// daub the shown number, and picks squares on free-selection specials), the
+// 9-daub call budget (a round now WINS on a completed line or LOSES when the
+// budget runs out and forfeits the wager), and the clickable casino map
+// including Mikawa's high-stakes rejection. Records video + ordered screenshots.
 import { test, expect } from "@playwright/test";
 
 const SHOTS = "artifacts/shots";
@@ -44,6 +45,8 @@ test("bingo full-feature demo", async ({ page }) => {
 
   // The wheel free-runs (spinning) but nothing marks until the player taps.
   await expect(page.locator("#called")).toHaveClass(/spinning/);
+  // The 9-daub call budget is shown as "N left" and starts at 9.
+  await expect(page.locator("#hint")).toContainText("9 left");
   // Confirm the no-tap invariant: the shown number advances on its own, yet
   // zero cells are marked while we never tap.
   const wheelStart = await page.locator("#called").textContent();
@@ -57,12 +60,21 @@ test("bingo full-feature demo", async ({ page }) => {
   ).toBe(0);
   await shot(page, "04-round-in-progress");
 
+  // A resolved round shows one of two outcomes: a line WIN pays out, or the
+  // call budget is exhausted and the wager is LOST.
+  const RESOLVED = /BINGO! Payout|Better luck next time/;
+
   // Tap (Space) to daub the shown number; drive any free-selection specials by
-  // clicking pickable squares; keep going until the round resolves.
+  // clicking pickable squares; keep going until the round resolves. Track the
+  // "N left" budget so we can assert it counts down from 9.
   const chipsBefore = Number(await page.locator("#chips").textContent());
+  let budgetMin = 9;
+  let sawCountdown = false;
+  let prevBudget = 9;
   for (let i = 0; i < 400; i++) {
-    const resolved = await page.evaluate(() =>
-      /Payout|No win|BINGO/.test(document.getElementById("message").textContent),
+    const resolved = await page.evaluate(
+      (re) => new RegExp(re).test(document.getElementById("message").textContent),
+      RESOLVED.source,
     );
     if (resolved) break;
     const picked = await page.evaluate(() => {
@@ -76,11 +88,23 @@ test("bingo full-feature demo", async ({ page }) => {
       );
       if (spinning) await page.keyboard.press("Space");
     }
+    const budget = await page.evaluate(() => {
+      const m = document.getElementById("hint").textContent.match(/(\d+) left/);
+      return m ? Number(m[1]) : null;
+    });
+    if (budget !== null) {
+      if (budget < prevBudget) sawCountdown = true;
+      budgetMin = Math.min(budgetMin, budget);
+      prevBudget = budget;
+    }
     await page.waitForTimeout(60);
   }
 
-  // The round resolved to a result, cells got daubed, and chips changed.
-  await expect(page.locator("#message")).toContainText(/Payout|No win|BINGO/);
+  // The round resolved to a win or a loss, cells got daubed, the budget counted
+  // down, and the chip balance changed (a win pays, a loss forfeits the wager).
+  await expect(page.locator("#message")).toContainText(RESOLVED);
+  expect(sawCountdown).toBe(true);
+  expect(budgetMin).toBeLessThan(9);
   expect(
     await page.evaluate(() => document.querySelectorAll("#card .cell.marked").length),
   ).toBeGreaterThanOrEqual(1);

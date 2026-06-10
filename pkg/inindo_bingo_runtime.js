@@ -79,6 +79,13 @@ export class WasmBingoRound {
         return ret;
     }
     /**
+     * @returns {number}
+     */
+    daubsRemaining() {
+        const ret = wasm.wasmbingoround_daubsRemaining(this.__wbg_ptr);
+        return ret;
+    }
+    /**
      * @param {Uint8Array} bytes
      * @param {number} c421
      * @returns {WasmBingoRound}

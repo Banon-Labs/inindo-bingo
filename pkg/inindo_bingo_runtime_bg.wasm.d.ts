@@ -9,6 +9,7 @@ export const wasmbingoround_boardNumbers: (a: number) => [number, number];
 export const wasmbingoround_buyChips: (a: number, b: number) => [number, number];
 export const wasmbingoround_c421: (a: number) => number;
 export const wasmbingoround_chips: (a: number) => number;
+export const wasmbingoround_daubsRemaining: (a: number) => number;
 export const wasmbingoround_fromStateBytes: (a: number, b: number, c: number) => [number, number, number];
 export const wasmbingoround_gold: (a: number) => number;
 export const wasmbingoround_marks: (a: number) => [number, number];
