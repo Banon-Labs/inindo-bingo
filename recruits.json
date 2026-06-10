@@ -67,6 +67,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F222",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F233",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F230",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F226",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB59",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 15,
     "ai_status": 118,
@@ -136,6 +174,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F302",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F313",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F310",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F306",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB44",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -200,6 +276,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F322",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F333",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F330",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F326",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB47",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -263,6 +377,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F3E2",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F3F3",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F3F0",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F3E6",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB8C",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -327,6 +479,38 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F402",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F413",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F410",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F406",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -385,6 +569,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F6E2",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F6F3",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F6F0",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F6E6",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB4A",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -448,6 +670,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F722",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F733",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F730",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F726",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB50",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -516,6 +776,44 @@
     }
    ],
    "magic_note": "spell names resolved via the runtime-proven identity mapping: mask bit i = spell id i (single-bit sweep rendered bit 9 = Repair, bit 10 = Purge; class-independence control passed). Caveat: identity rests on two positional matches + one control (work/source-reconstruction/spell-list-trace/).",
+   "watch": [
+    {
+     "label": "trust",
+     "address": "$7E:F742",
+     "size": 1,
+     "meaning": "how much they trust you, 0-100; joining needs ~60-65"
+    },
+    {
+     "label": "ai_order",
+     "address": "$7E:F753",
+     "size": 1,
+     "meaning": "low half of this byte: 7 = standing idle = recruitable; anything else = busy"
+    },
+    {
+     "label": "pending_move",
+     "address": "$7E:F750",
+     "size": 1,
+     "meaning": "must be 0 (nothing scheduled) for recruitment"
+    },
+    {
+     "label": "magic_mask",
+     "address": "$7E:F746",
+     "size": 2,
+     "meaning": "bit i = spell i known"
+    },
+    {
+     "label": "day_counter",
+     "address": "$7E:F004",
+     "size": 1,
+     "meaning": "in-game date"
+    },
+    {
+     "label": "location_chain_head",
+     "address": "$7E:FB86",
+     "size": 1,
+     "meaning": "first NPC standing at this location (status index; FF = nobody)"
+    }
+   ],
    "recruit_state": {
     "trust_seed": 0,
     "ai_status": 118,
@@ -800,6 +1098,7 @@
   "recruits[].name|class": "name table file 0x014008 stride 0x10 (+0x04 name, +0x02 b2); class_offset 0x00BAAA + class strings 0x00BAAE",
   "recruits[].equipped[].name": "item table file 0x01DBBF stride 0x11; slot from equipment stat table 0x01E4E8 (+4 & 7)",
   "recruits[].location": "seed occupant-chain walk (location[48] at 0x00EFEE+0xB38); 0-29 = provinces (confirmed, town-building-records-bingo-locations.md section 4), 30-47 = specials 0-17 (ordering hypothesis, high confidence); province cells from $05:B320 (file 0x02B320), cross-checked against towns.json (casino-map legs)",
+  "recruits[].watch": "computed WRAM addresses over the live $7E:F000 save payload: status[63] at $7E:F0B4 stride 0x20 (trust +0x0E, magic mask +0x12 u16, ai_data0 +0x1C, ai_status +0x1F), location[48] chain heads at $7E:FB38 stride 3, day counter $7E:F004 (save-record-field-map.md); idle-nibble-7 pre-gate and the story-beat-invoked scheduling pass per recruit-runtime-investigation.md",
   "spell_reference": "spell table file 0x01484E stride 0x0A (42 entries)",
   "how_to_recruit": "crates/inindo-recruit-runtime/src/plans.rs constants",
   "evidence_record": "work/source-reconstruction/recruit-runtime-investigation.md"

@@ -30,6 +30,20 @@ test("recruit finder map + character sheet", async ({ page }) => {
   await expect(sheet).toContainText("not recruitable at game start");
   await page.screenshot({ path: `${SHOTS}/11-hanzo-sheet.png`, animations: "disabled" });
 
+  // Emulator validation panel: Indara's sheet shows her computed trust
+  // address ($7E:F0B4 + 52*0x20 + 0x0E = $7E:F742) plus the chain-head row.
+  await page.locator("#map .label", { hasText: "Indara" }).click();
+  await expect(page.locator("#who")).toHaveText("Indara");
+  const indara = page.locator("#sheet");
+  await expect(indara).toContainText("Validate in your emulator");
+  await expect(indara).toContainText("$7E:F742");
+  await expect(indara).toContainText("how much they trust you");
+  await expect(indara).toContainText("$7E:FB86"); // her town's chain head
+  await page.screenshot({ path: `${SHOTS}/12-indara-validation.png`, animations: "disabled" });
+
+  // Page-level explainer about the scheduling pass exists.
+  await expect(page.locator("#schednote")).toContainText("scheduling pass");
+
   // Off-map recruit is clickable too.
   await page.locator("#offmap a", { hasText: "Bishamon" }).click();
   await expect(page.locator("#who")).toHaveText("Bishamon");

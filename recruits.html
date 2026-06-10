@@ -29,6 +29,16 @@
   ul { margin: .1rem 0; padding-left: 1.1rem; }
   .note { font-size: .74rem; color: #99a; font-style: italic; line-height: 1.35; }
   .ok { color: #8f8; } .no { color: #ff9a7a; }
+  .watch { width: 100%; border-collapse: collapse; font-size: .78rem; }
+  .watch td { padding: .15rem .3rem; border-top: 1px solid #2c3548; vertical-align: top; }
+  .watch .addr { font-family: ui-monospace, monospace; color: #ffd479; white-space: nowrap; }
+  .copybtn { font-size: .72rem; background: #2a3650; color: #aef; border: 1px solid #456;
+             border-radius: 4px; padding: .15rem .5rem; cursor: pointer; margin-top: .3rem; }
+  .copybtn:hover { border-color: #8cf; }
+  #schednote { max-width: 720px; margin: 1rem auto 0; font-size: .8rem; color: #9aa;
+               background: #161c28; border: 1px solid #2c3548; border-radius: 8px;
+               padding: .6rem .9rem; line-height: 1.5; }
+  #schednote b { color: #ffd479; }
   .legend { text-align: center; font-size: .8rem; color: #9aa; margin-top: .6rem; }
   .legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 .25rem 0 .9rem; vertical-align: middle; }
   a { color: #8cf; }
@@ -50,6 +60,18 @@
   </div>
 </div>
 <p class="legend"><b style="background:#45d6e8"></b>recruitable ally <b style="background:#5b6b7d"></b>town (no recruit)</p>
+
+<div id="schednote">
+  <b>Why is nobody recruitable at the start?</b> Each character secretly carries an
+  AI order ("busy" vs "standing idle") and you can only recruit someone while they're
+  idle. Everyone starts the game with a busy order. Orders are re-rolled by a
+  <b>scheduling pass</b> that runs at story beats — <em>not</em> every dawn — so a
+  character flips to recruitable only after a story event re-rolls their order to idle.
+  Don't take our word for it: every character sheet below has a
+  "Validate in your emulator" list — put those addresses in your emulator's RAM watch,
+  warp to the town, and check the values yourself. A simulator lever that predicts
+  these re-rolls ahead of time is planned.
+</div>
 
 <footer>
   Made for educational and research purposes only. Independent, unaffiliated
@@ -87,6 +109,35 @@ const cellY = (gy) => (gy - grid.oy + 0.5) * PXSCALE;
 
 function statRow(label, v) { return `<span>${label}<b>${v}</b></span>`; }
 
+const WATCH_NAMES = {
+  trust: "Trust",
+  ai_order: "AI order byte",
+  pending_move: "Pending move",
+  magic_mask: "Magic mask",
+  day_counter: "Day counter",
+  location_chain_head: "Who's standing here",
+};
+
+function watchSection(r) {
+  if (!r.watch || !r.watch.length) return "";
+  const rows = r.watch.map(w =>
+    `<tr><td class="addr">${w.address}${w.size === 2 ? " (2B)" : ""}</td>` +
+    `<td><b>${WATCH_NAMES[w.label] || w.label}</b> — ${w.meaning}</td></tr>`).join("");
+  return `
+    <h3>Validate in your emulator</h3>
+    <div class="note">Add these to your emulator's RAM watch, warp to
+      ${r.location.name}, and see the recruit state for yourself.</div>
+    <table class="watch">${rows}</table>
+    <button class="copybtn" id="copywatch">copy watch list</button>`;
+}
+
+function copyWatch(r) {
+  const text = r.watch.map(w =>
+    `${w.address}\t${w.size}B\t${WATCH_NAMES[w.label] || w.label} — ${w.meaning}`).join("\n");
+  navigator.clipboard?.writeText(text);
+  $("copywatch").textContent = "copied!";
+}
+
 function showRecruit(r) {
   selected = r;
   $("who").textContent = r.name;
@@ -121,7 +172,9 @@ function showRecruit(r) {
         : "<span class='no'>not recruitable at game start</span> — becomes recruitable when standing idle"}</li>
       <li>Asks to join: needs trust ≥ ${howto.accept_gate.rule.replace("trust >= ", "")}</li>
       <li>Willing to talk recruitment: ~30% per meeting (low trust), ~20% (high trust)</li>
-    </ul>`;
+    </ul>
+    ${watchSection(r)}`;
+  document.getElementById("copywatch")?.addEventListener("click", () => copyWatch(r));
 }
 
 function render() {
