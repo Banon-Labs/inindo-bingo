@@ -39,6 +39,32 @@
                background: #161c28; border: 1px solid #2c3548; border-radius: 8px;
                padding: .6rem .9rem; line-height: 1.5; }
   #schednote b { color: #ffd479; }
+  #sim { max-width: 720px; margin: 1rem auto 0; background: #161c28; border: 1px solid #2c3548;
+         border-radius: 8px; padding: .6rem .9rem; }
+  #sim h2 { font-size: .95rem; color: #ffd479; margin: .2rem 0 .4rem; }
+  .simintro { font-size: .8rem; color: #9aa; line-height: 1.5; margin: .2rem 0 .6rem; }
+  .simintro b, .simnote b { color: #ffd479; }
+  .simctl { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: .85rem; }
+  .simctl input, .simctl select { background: #0e1420; color: #e8e8f0; border: 1px solid #456;
+         border-radius: 4px; padding: .2rem .4rem; font-family: ui-monospace, monospace; }
+  .simctl button { background: #2a3650; color: #aef; border: 1px solid #456; border-radius: 4px;
+         padding: .3rem .8rem; cursor: pointer; }
+  .simctl button:hover { border-color: #8cf; }
+  .simnote { margin: .6rem 0; }
+  #sim-out { margin: .8rem 0; }
+  .passblock { margin: .6rem 0; }
+  .passblock h3 { font-size: .8rem; color: #8cf; margin: .4rem 0 .2rem;
+         text-transform: uppercase; letter-spacing: .05em; }
+  .passmeta { font-size: .74rem; color: #99a; margin: .1rem 0 .3rem; }
+  .simtab { width: 100%; border-collapse: collapse; font-size: .8rem; }
+  .simtab td, .simtab th { padding: .15rem .35rem; border-top: 1px solid #2c3548; text-align: left; }
+  .simtab th { color: #8cf; font-weight: 600; font-size: .72rem; text-transform: uppercase; }
+  .simtab .addr { font-family: ui-monospace, monospace; color: #ffd479; white-space: nowrap; font-size: .72rem; }
+  .simtab .dim { color: #667; }
+  .witness { color: #e8b9ff; border: 1px solid #a06cc0; border-radius: 4px;
+         padding: 0 .3rem; font-size: .68rem; white-space: nowrap; }
+  .stopline { color: #ff9a7a; font-size: .8rem; margin: .3rem 0; }
+  .stopline code { color: #ffd479; }
   .legend { text-align: center; font-size: .8rem; color: #9aa; margin-top: .6rem; }
   .legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 .25rem 0 .9rem; vertical-align: middle; }
   a { color: #8cf; }
@@ -69,8 +95,57 @@
   character flips to recruitable only after a story event re-rolls their order to idle.
   Don't take our word for it: every character sheet below has a
   "Validate in your emulator" list — put those addresses in your emulator's RAM watch,
-  warp to the town, and check the values yourself. A simulator lever that predicts
-  these re-rolls ahead of time is planned.
+  warp to the town, and check the values yourself. The simulator below predicts
+  these re-rolls ahead of time.
+</div>
+
+<div id="sim">
+  <h2>Scheduling simulator — predict the order re-rolls</h2>
+  <p class="simintro">
+    Runs the game's <b>rebuilt scheduling code</b> — matched bit-for-bit against 250
+    recorded runs of the real game — on the real new-game roster. The trust drift and
+    order writes below are that validated code. Set the levers, press run, then check
+    the addresses in your emulator.
+  </p>
+  <div class="simctl">
+    <label>RNG word <input id="sim-seed" value="0063D76A" size="9" spellcheck="false"></label>
+    <label>your level <input id="sim-hero" type="number" min="1" max="99" value="1"></label>
+    <label>passes
+      <select id="sim-passes">
+        <option value="0">0 (start state)</option>
+        <option value="1" selected>1</option>
+        <option value="2">2 (stops early)</option>
+      </select>
+    </label>
+    <button id="sim-run">run the schedule</button>
+  </div>
+  <div class="note simnote">
+    <b>RNG word</b>: the game's live RNG state (<span class="addr">$7E:5320</span>, 4
+    bytes) at the moment the 25-character pass body starts; the default is the power-on
+    value. The game burns an unpredictable number of rolls on screen drawing before the
+    pass body, so to verify in-game, read that word in your RAM watch right as the pass
+    begins. <b>Your level</b> is a real input: the idle re-roll requires your ninja's
+    level &ge; the ally's level (minimum 7). <b>Passes</b> fire at <em>story beats</em>,
+    not every dawn.
+  </div>
+  <div id="sim-out"><span class="note">Press "run the schedule" to simulate.</span></div>
+  <div class="note simnote">
+    <b>Why at most 2 passes?</b> Pass 2 always walks into characters whose AI classes
+    aren't rebuilt yet, and the simulation stops there rather than show wrong numbers
+    (proven seed-independent by a sweep test). Pass 1 covers Hanzo, Tenkai, Kyonyo and
+    Suzaku; pass 2 reaches Bishamon before stopping; Gao, Kenko Hosi and Indara sit
+    beyond the supported horizon for now.
+    <b>Only Hanzo can flip.</b> Among the 8 allies, only Hanzo's AI class (a loner) has
+    a decoded path to the "standing idle" order. The idle re-roll itself is decoded from
+    the game code but never witnessed at runtime (the validated capture had a level-1
+    hero), so idle predictions carry the
+    <span class="witness">decoded, awaiting runtime witness</span> tag. The other seven
+    never flip recruitable in this simulator — their path to idle is open research.
+    <b>Start state:</b> the new-game roster. Every ally/town byte this code reads is
+    identical between the new-game seed image and the validated runtime capture that
+    supplies the remaining world context (quest tables, player position); the published
+    state file carries only those simulation-input bytes.
+  </div>
 </div>
 
 <footer>
@@ -225,6 +300,96 @@ const data = await (await fetch("recruits.json")).json();
 recruits = data.recruits;
 howto = data.how_to_recruit;
 render();
+
+// ---- scheduling simulator (wasm: the oracle-validated daily pass) ----
+// Loaded dynamically so a missing wasm package degrades only the sim
+// section, never the map above it.
+
+// Plain-language paraphrases of the decoded order handlers (low nibble of
+// the AI order byte). 7 = idle = recruitable; everything else = busy.
+const ORDER_WORDS = {
+  7: "standing idle — recruitable",
+  6: "waiting / traveling (busy)",
+  5: "moving around the region (busy)",
+  3: "visiting a town (busy)",
+  1: "meeting someone (busy)",
+};
+const orderWord = (n) => ORDER_WORDS[n] ?? `busy (order ${n})`;
+
+const watchAddr = (r, label) => r.watch.find((w) => w.label === label)?.address ?? "";
+
+function allyRow(a) {
+  const r = recruits.find((x) => x.character_index === a.index);
+  const order = a.order ?? a.order_after;
+  const recruitable = a.recruitable
+    ? `<span class="ok">YES</span> <span class="witness">decoded, awaiting runtime witness</span>`
+    : `<span class="no">no</span>`;
+  const trust = "trust_after" in a
+    ? (a.trust_before === a.trust_after ? a.trust_after : `${a.trust_before} → ${a.trust_after}`)
+    : a.trust;
+  const processed = !("processed" in a) || a.processed;
+  return `<tr${processed ? "" : ' class="dim"'}>
+    <td>${a.name}${processed ? "" : " (not reached)"}</td>
+    <td>${orderWord(order)}</td>
+    <td>${trust}</td>
+    <td>${recruitable}</td>
+    <td class="addr">${watchAddr(r, "ai_order")} / ${watchAddr(r, "trust")}</td>
+  </tr>`;
+}
+
+function passTable(report, heading, meta) {
+  return `<div class="passblock"><h3>${heading}</h3>${meta}
+    <table class="simtab">
+      <tr><th>ally</th><th>order</th><th>trust</th><th>recruitable</th><th>check at (order / trust)</th></tr>
+      ${report.allies.map(allyRow).join("")}
+    </table></div>`;
+}
+
+const hex8 = (v) => (v >>> 0).toString(16).padStart(8, "0").toUpperCase();
+
+async function runSim() {
+  const out = $("sim-out");
+  const seed = parseInt($("sim-seed").value.trim(), 16);
+  const hero = Math.min(99, Math.max(1, Number($("sim-hero").value) | 0));
+  const passes = Number($("sim-passes").value);
+  if (!Number.isFinite(seed)) {
+    out.innerHTML = `<div class="stopline">RNG word must be hex, e.g. 0063D76A</div>`;
+    return;
+  }
+  const { default: init, SchedulingSim } = await import("./pkg-recruit/inindo_recruit_runtime.js");
+  await init();
+  const stateBytes = new Uint8Array(await (await fetch("sim-pass-state.bin")).arrayBuffer());
+  const sim = SchedulingSim.fromWramImage(stateBytes, hero, seed >>> 0);
+  const blocks = [];
+  const snap = JSON.parse(sim.snapshotJson());
+  blocks.push(passTable(snap, "Start state (new game)",
+    `<div class="passmeta">orders as seeded — everyone busy, nobody recruitable yet</div>`));
+  for (let p = 1; p <= passes; p++) {
+    const rep = JSON.parse(sim.stepJson());
+    if (rep.status === "stopped") {
+      blocks.push(passTable(rep, `Pass ${rep.pass} — partial`,
+        `<div class="passmeta">state as of the stop; "not reached" allies keep their previous order</div>`));
+      blocks.push(`<div class="stopline">simulation stopped: <code>${rep.stopped_target}</code>
+        (while processing character record ${rep.stopped_record}). That code path is
+        decoded-but-not-rebuilt residue; rather than show wrong numbers, the simulation
+        stops. Results above the stop stand.</div>`);
+      break;
+    }
+    const witness = rep.idle_gate_rolled
+      ? ` <span class="witness">passed through the idle re-roll — decoded, awaiting runtime witness</span>`
+      : "";
+    blocks.push(passTable(rep, `Pass ${rep.pass}`,
+      `<div class="passmeta">${rep.processed} characters processed ·
+       RNG word ${hex8(rep.rng_before)} → ${hex8(rep.rng_after)}${witness}</div>`));
+  }
+  out.innerHTML = blocks.join("");
+}
+
+$("sim-run").addEventListener("click", () => {
+  runSim().catch((err) => {
+    $("sim-out").innerHTML = `<div class="stopline">simulation failed to load: ${err}</div>`;
+  });
+});
 </script>
 </body>
 </html>
