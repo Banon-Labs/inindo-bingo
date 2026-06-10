@@ -6,7 +6,10 @@
 <style>
   body { font-family: system-ui, sans-serif; max-width: 460px; margin: 2rem auto; padding: 0 1rem; background: #101018; color: #e8e8f0; text-align: center; }
   h1 { font-size: 1.1rem; color: #8cf; }
-  #called { font-size: 1.6rem; min-height: 2.2rem; color: #ffd479; font-weight: bold; }
+  #called { font-size: 2.1rem; width: 4.4rem; height: 4.4rem; line-height: 4.4rem; margin: .5rem auto; color: #ffd479; font-weight: bold; border: 3px solid #58c; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; background: #16203a; transition: background .08s; }
+  #called.spinning { border-color: #6cf; box-shadow: 0 0 12px #2c4a72; }
+  #called:active { background: #2c4a72; }
+  #hint { font-size: .85rem; min-height: 1.1rem; color: #7ac; }
   #card { display: grid; grid-template-columns: repeat(5, 64px); gap: 6px; justify-content: center; margin: 1rem auto; }
   .cell { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; border: 2px solid #445; border-radius: 8px; background: #1c2230; transition: background .2s, border-color .2s; }
   .cell.marked { background: #b4452a; border-color: #ffd479; color: #fff; }
@@ -27,6 +30,7 @@
 <h1>ININDO BINGO — rebuilt game logic (WASM)</h1>
 <p style="text-align:center;margin-top:-.4rem"><a href="map.html" style="color:#8cf;font-size:.85rem">🗾 casino map of Japan →</a> · <a href="recruits.html" style="color:#8cf;font-size:.85rem">🥷 recruit finder →</a></p>
 <div id="called">&nbsp;</div>
+<div id="hint">&nbsp;</div>
 <div id="card"></div>
 <!-- B45A wager-prompt render order: balance prints before the bet field. -->
 <div id="status">
@@ -121,7 +125,6 @@ function freshStateBytes() {
 let round = null;
 let c421 = 0;
 let cells = [];
-let animFrames = 0;
 let running = false;
 let picking = false;
 
@@ -222,61 +225,88 @@ function pickCell(i) {
   if (!picking || round.marks()[i] === 1) return;
   try {
     round.applySelection(i);
+    paint();
+    if (round.phaseCode() === 2) { // a free pick completed the winning line
+      picking = false;
+      $("message").textContent = "BINGO!";
+      finishRound();
+      return;
+    }
     if (round.pendingSelections() === 0) {
       picking = false;
       $("message").textContent = " ";
-      running = true;
-      animFrames = turnDelayFrames(5);
-      requestAnimationFrame(frame);
+      resumeWheel();
     } else {
       $("message").textContent = `Pick ${round.pendingSelections()} more.`;
     }
-    paint();
   } catch (e) {
     $("error").textContent = String(e);
   }
 }
 
-// Decoded $BBBB pacing profile params: speed x |step| frames per call at
-// 60fps (frame-exactness pending a BizHawk trace, tracked on the ticket).
-function turnDelayFrames(profile) {
-  const params = { 5: [2, 4, 2, -8], 20: [2, 8, 2, -4], 100: [2, 16, 2, -2] }[profile];
-  return params ? params[1] * Math.abs(params[3]) : 32;
+// The roulette wheel: $C9C1 free-runs (advanceSpinner steps it one $BBBB unit),
+// and ba72 maps the shown value to the number you'd daub. The wheel advances
+// one unit every WHEEL_STEP_FRAMES; the player presses to daub the shown number.
+const WHEEL_STEP_FRAMES = 4;
+let stepCounter = 0;
+
+// Decoded $BA72 map: the called number is a pure function of the spinner byte,
+// with the % 5 == 3 phase being a special-pattern window instead of a number.
+function spinnerCandidate(c9c1) {
+  if (c9c1 % 5 === 3) return { special: true };
+  const n = c9c1 + 2;
+  return { special: false, number: (n % 5) + (0x18 - Math.floor(n / 5) * 4) };
 }
 
-function frame() {
+function paintWheel() {
+  const c = spinnerCandidate(round.spinner());
+  $("called").textContent = c.special ? "✦" : c.number;
+}
+
+function resumeWheel() {
+  running = true;
+  stepCounter = 0;
+  $("called").classList.add("spinning");
+  $("hint").textContent = "Tap SPACE or the wheel to daub the shown number!";
+  requestAnimationFrame(spinFrame);
+}
+
+function spinFrame() {
   if (!running) return;
-  if (animFrames > 0) {
-    animFrames -= 1;
-    requestAnimationFrame(frame);
-    return;
+  stepCounter += 1;
+  if (stepCounter >= WHEEL_STEP_FRAMES) {
+    stepCounter = 0;
+    round.advanceSpinner();
+    paintWheel();
   }
+  requestAnimationFrame(spinFrame);
+}
+
+// Daub: latch the number the wheel is showing. A line ends the round; a special
+// phase hands control to the player to place free marks on the card.
+function daub() {
+  if (!running || picking) return;
   try {
-    const r = round.stepTurn();
-    const [kind, , number, , c9c2, , fullBoard, profile, , fbLo, fbHi] = r;
+    const r = round.tap();
+    const [kind, , , , , , lineDone, , , fbLo, fbHi] = r;
     const textPtr = fbLo | (fbHi << 8);
-    if (kind === 0) {
-      $("called").textContent = `Number ${number}!`;
-      if (c9c2 !== 0) $("message").textContent = "Line!";
-    } else if (kind === 1) {
-      $("called").textContent = "✦";
-      if (TEXTS[textPtr]) $("message").textContent = TEXTS[textPtr];
-      if (round.phaseCode() === 4) {
-        // Player-selection specials: the player picks square(s).
-        running = false;
-        picking = true;
-        paint();
-        return;
-      }
-    } else {
+    paint();
+    if (round.phaseCode() === 4) { // Free pick — the player chooses
       running = false;
-      finishRound();
+      picking = true;
+      $("called").classList.remove("spinning");
+      $("message").textContent = TEXTS[textPtr] ?? "Make your selection.";
+      $("hint").textContent = "Click a green cell to place your free mark.";
+      paint();
       return;
     }
-    if (fullBoard) $("message").textContent = "BINGO!";
-    paint();
-    animFrames = turnDelayFrames(profile);
-    requestAnimationFrame(frame);
+    if (kind === 1 && TEXTS[textPtr]) $("message").textContent = TEXTS[textPtr];
+    if (lineDone === 1 || round.phaseCode() === 2) {
+      running = false;
+      $("called").classList.remove("spinning");
+      $("message").textContent = "BINGO!";
+      finishRound();
+    }
   } catch (e) {
     running = false;
     $("error").textContent = String(e);
@@ -285,6 +315,9 @@ function frame() {
 
 function finishRound() {
   try {
+    running = false;
+    $("called").classList.remove("spinning");
+    $("hint").textContent = " ";
     const [paid, aLo, aHi, , , replayPrompted] = round.resolveRound();
     const amount = aLo | (aHi << 8);
     $("message").textContent = paid ? `Payout: ${amount} chips!` : "No win this round.";
@@ -340,9 +373,7 @@ function startRound() {
     $("message").textContent = " ";
     paint();
     persist();
-    running = true;
-    animFrames = turnDelayFrames(100); // decoded round-entry pacing profile
-    requestAnimationFrame(frame);
+    resumeWheel();
   } catch (e) {
     $("error").textContent = String(e);
   }
@@ -393,6 +424,10 @@ $("resetLink").addEventListener("click", (e) => {
 });
 $("devMode").addEventListener("change", paintKnobs);
 $("applyKnobs").addEventListener("click", applyKnobs);
+$("called").addEventListener("click", daub);
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space" && running && !picking) { e.preventDefault(); daub(); }
+});
 </script>
 <footer style="margin-top:2rem;padding-top:1rem;border-top:1px solid #334;color:#778;font-size:.78rem;line-height:1.5;text-align:center">
   Made for educational and research purposes only. This is an independent,

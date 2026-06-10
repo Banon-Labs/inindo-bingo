@@ -2,9 +2,9 @@
 
 /**
  * Playable-round boundary (ticket inindo-ks4yrb.1): wraps RoundSession with
- * flat JS-friendly buffers. Turn report layout (11 bytes):
- * [kind 0=call/1=special/2=sweep-exhausted, c9c1, number, cell(0xFF none),
- *  c9c2, c9c3, full_board, pacing_profile, raw_c420, feedback_lo, feedback_hi].
+ * flat JS-friendly buffers. Tap report layout (11 bytes):
+ * [kind 0=call/1=special, latched_c9c1, number, cell(0xFF none), c9c2, c9c3,
+ *  line_completed, pacing_profile, raw_c420, feedback_lo, feedback_hi].
  * Resolve report (6 bytes): [paid, amount_lo, amount_hi, chips_lo, chips_hi,
  *  replay_prompted].
  */
@@ -24,6 +24,13 @@ export class WasmBingoRound {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_wasmbingoround_free(ptr, 0);
+    }
+    /**
+     * @returns {number}
+     */
+    advanceSpinner() {
+        const ret = wasm.wasmbingoround_advanceSpinner(this.__wbg_ptr);
+        return ret;
     }
     /**
      * @param {number} cell
@@ -134,6 +141,13 @@ export class WasmBingoRound {
         return v1;
     }
     /**
+     * @returns {number}
+     */
+    spinner() {
+        const ret = wasm.wasmbingoround_spinner(this.__wbg_ptr);
+        return ret;
+    }
+    /**
      * @param {number} wager
      * @returns {boolean}
      */
@@ -156,8 +170,8 @@ export class WasmBingoRound {
     /**
      * @returns {Uint8Array}
      */
-    stepTurn() {
-        const ret = wasm.wasmbingoround_stepTurn(this.__wbg_ptr);
+    tap() {
+        const ret = wasm.wasmbingoround_tap(this.__wbg_ptr);
         if (ret[3]) {
             throw takeFromExternrefTable0(ret[2]);
         }

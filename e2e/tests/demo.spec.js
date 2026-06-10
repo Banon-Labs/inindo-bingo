@@ -1,7 +1,9 @@
 // Full-feature showcase of the Inindo Bingo site: dev-mode seed lock for a
-// deterministic round, the gold -> chips -> wager loop, the auto-played round
-// (called numbers, specials, payout), and the clickable casino map including
-// Mikawa's high-stakes rejection. Records video + ordered screenshots.
+// deterministic round, the gold -> chips -> wager loop, the tap-driven spinner
+// round (the wheel free-runs; the player presses Space / clicks the wheel to
+// daub the shown number, and picks squares on free-selection specials), and the
+// clickable casino map including Mikawa's high-stakes rejection. Records video
+// + ordered screenshots.
 import { test, expect } from "@playwright/test";
 
 const SHOTS = "artifacts/shots";
@@ -36,27 +38,54 @@ test("bingo full-feature demo", async ({ page }) => {
   await expect(page.locator("#chips")).toHaveText("60");
   await shot(page, "03-bought-chips");
 
-  // --- Wager and watch the round auto-play ---
+  // --- Wager and play the tap-driven spinner round ---
   await page.locator("#bet").fill("10");
   await page.locator("#start").click();
-  // A number gets called and cells start marking.
+
+  // The wheel free-runs (spinning) but nothing marks until the player taps.
+  await expect(page.locator("#called")).toHaveClass(/spinning/);
+  // Confirm the no-tap invariant: the shown number advances on its own, yet
+  // zero cells are marked while we never tap.
+  const wheelStart = await page.locator("#called").textContent();
   await page.waitForFunction(
-    () => document.querySelectorAll("#card .cell.marked").length >= 3,
-    { timeout: 30_000 },
+    (start) => document.getElementById("called").textContent !== start,
+    wheelStart,
+    { timeout: 5_000 },
   );
+  expect(
+    await page.evaluate(() => document.querySelectorAll("#card .cell.marked").length),
+  ).toBe(0);
   await shot(page, "04-round-in-progress");
 
-  // Drive any selection specials (the player picks squares), then let the
-  // round resolve to a payout / no-win.
-  await page.waitForFunction(
-    () => {
-      const pickable = document.querySelectorAll("#card .cell.pickable");
-      if (pickable.length) { pickable[0].click(); return false; }
-      const m = document.getElementById("message").textContent;
-      return /Payout|No win|BINGO/.test(m);
-    },
-    { timeout: 60_000 },
-  );
+  // Tap (Space) to daub the shown number; drive any free-selection specials by
+  // clicking pickable squares; keep going until the round resolves.
+  const chipsBefore = Number(await page.locator("#chips").textContent());
+  for (let i = 0; i < 400; i++) {
+    const resolved = await page.evaluate(() =>
+      /Payout|No win|BINGO/.test(document.getElementById("message").textContent),
+    );
+    if (resolved) break;
+    const picked = await page.evaluate(() => {
+      const p = document.querySelectorAll("#card .cell.pickable");
+      if (p.length) { p[0].click(); return true; }
+      return false;
+    });
+    if (!picked) {
+      const spinning = await page.evaluate(() =>
+        document.getElementById("called").classList.contains("spinning"),
+      );
+      if (spinning) await page.keyboard.press("Space");
+    }
+    await page.waitForTimeout(60);
+  }
+
+  // The round resolved to a result, cells got daubed, and chips changed.
+  await expect(page.locator("#message")).toContainText(/Payout|No win|BINGO/);
+  expect(
+    await page.evaluate(() => document.querySelectorAll("#card .cell.marked").length),
+  ).toBeGreaterThanOrEqual(1);
+  const chipsAfter = Number(await page.locator("#chips").textContent());
+  expect(chipsAfter).not.toBe(chipsBefore);
   await shot(page, "05-round-result");
 
   // --- Casino map of Japan ---

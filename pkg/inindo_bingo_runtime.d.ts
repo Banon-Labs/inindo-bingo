@@ -3,9 +3,9 @@
 
 /**
  * Playable-round boundary (ticket inindo-ks4yrb.1): wraps RoundSession with
- * flat JS-friendly buffers. Turn report layout (11 bytes):
- * [kind 0=call/1=special/2=sweep-exhausted, c9c1, number, cell(0xFF none),
- *  c9c2, c9c3, full_board, pacing_profile, raw_c420, feedback_lo, feedback_hi].
+ * flat JS-friendly buffers. Tap report layout (11 bytes):
+ * [kind 0=call/1=special, latched_c9c1, number, cell(0xFF none), c9c2, c9c3,
+ *  line_completed, pacing_profile, raw_c420, feedback_lo, feedback_hi].
  * Resolve report (6 bytes): [paid, amount_lo, amount_hi, chips_lo, chips_hi,
  *  replay_prompted].
  */
@@ -13,6 +13,7 @@ export class WasmBingoRound {
     private constructor();
     free(): void;
     [Symbol.dispose](): void;
+    advanceSpinner(): number;
     applySelection(cell: number): Uint8Array;
     boardNumbers(): Uint8Array;
     buyChips(quantity: number): Uint8Array;
@@ -25,9 +26,10 @@ export class WasmBingoRound {
     phaseCode(): number;
     rearm(): void;
     resolveRound(): Uint8Array;
+    spinner(): number;
     startRound(wager: number): boolean;
     stateBytes(): Uint8Array;
-    stepTurn(): Uint8Array;
+    tap(): Uint8Array;
     wager(): number;
 }
 
@@ -48,6 +50,7 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_wasmbingoround_free: (a: number, b: number) => void;
     readonly __wbg_wasmbingoruntime_free: (a: number, b: number) => void;
+    readonly wasmbingoround_advanceSpinner: (a: number) => number;
     readonly wasmbingoround_applySelection: (a: number, b: number) => [number, number, number, number];
     readonly wasmbingoround_boardNumbers: (a: number) => [number, number];
     readonly wasmbingoround_buyChips: (a: number, b: number) => [number, number];
@@ -60,9 +63,10 @@ export interface InitOutput {
     readonly wasmbingoround_phaseCode: (a: number) => number;
     readonly wasmbingoround_rearm: (a: number) => [number, number];
     readonly wasmbingoround_resolveRound: (a: number) => [number, number, number, number];
+    readonly wasmbingoround_spinner: (a: number) => number;
     readonly wasmbingoround_startRound: (a: number, b: number) => [number, number, number];
     readonly wasmbingoround_stateBytes: (a: number) => [number, number];
-    readonly wasmbingoround_stepTurn: (a: number) => [number, number, number, number];
+    readonly wasmbingoround_tap: (a: number) => [number, number, number, number];
     readonly wasmbingoround_wager: (a: number) => number;
     readonly wasmbingoruntime_entryTextPointer: (a: number) => number;
     readonly wasmbingoruntime_fromStateBytes: (a: number, b: number) => [number, number, number];
