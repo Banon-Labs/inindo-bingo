@@ -8,9 +8,8 @@
   h1 { font-size: 1.1rem; color: #8cf; text-align: center; }
   .sub { text-align: center; color: #9aa; font-size: .85rem; margin-top: -.3rem; }
   #wrap { display: flex; gap: 1rem; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
-  #map { position: relative; background:
-    radial-gradient(circle at 60% 55%, #24506e 0%, #173049 70%, #101c2c 100%);
-    border: 2px solid #3a5570; border-radius: 10px; }
+  #map { position: relative; background: #0e2236; border: 2px solid #3a5570; border-radius: 10px; }
+  #land { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
   .town { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; box-sizing: border-box; }
   .dot { width: 9px; height: 9px; background: #5b6b7d; border: 1px solid #1a2430; }
   .casino { width: 16px; height: 16px; cursor: pointer; border: 2px solid #0c1118; }
@@ -34,7 +33,7 @@
 </head>
 <body>
 <h1>ININDO CASINO MAP — every parlor, real entry rules</h1>
-<p class="sub">Town positions and parlor data decoded from the original game. Click a casino town. · <a href="index.html">play a round →</a></p>
+<p class="sub">Town positions, the island silhouette, and parlor rules are all derived from the decoded game data. Click a casino town. · <a href="index.html">play a round →</a></p>
 <div id="wrap">
   <div id="map"></div>
   <div id="panel">
@@ -61,10 +60,38 @@
 import init, { WasmBingoRuntime } from "./pkg/inindo_bingo_runtime.js";
 
 const $ = (id) => document.getElementById(id);
-const MAP_W = 380, MAP_H = 420;
 const HIGH_ENTRY_GOLD_MIN = 3000; // decoded high-door gate (runtime-validated)
+const PXSCALE = 9; // on-screen pixels per overworld land cell
 
-let towns = [], selected = null;
+let towns = [], selected = null, grid = null;
+let MAP_W = 380, MAP_H = 420;
+
+// Pixel-art Japan silhouette, grown from the decoded town positions (every
+// town is a real city, so the point cloud traces the archipelago).
+function drawLand() {
+  const cv = document.createElement("canvas");
+  cv.id = "land";
+  cv.width = grid.cols; cv.height = grid.rows; // 1 canvas px per land cell
+  cv.style.width = (grid.cols * PXSCALE) + "px";
+  cv.style.height = (grid.rows * PXSCALE) + "px";
+  const ctx = cv.getContext("2d");
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      if (grid.land[r][c] === "#") {
+        // Subtle vertical shade so the landmass reads as terrain.
+        ctx.fillStyle = r % 3 === 0 ? "#3f6b3a" : "#4a7d42";
+        ctx.fillRect(c, r, 1, 1);
+      }
+    }
+  }
+  MAP_W = grid.cols * PXSCALE; MAP_H = grid.rows * PXSCALE;
+  $("map").style.width = MAP_W + "px"; $("map").style.height = MAP_H + "px";
+  $("map").replaceChildren(cv);
+}
+
+// Town (gx,gy) overworld cell -> on-screen pixel (cell centre).
+const cellX = (gx) => (gx - grid.ox + 0.5) * PXSCALE;
+const cellY = (gy) => (gy - grid.oy + 0.5) * PXSCALE;
 
 function stateBytes(highClass) {
   const b = new Uint8Array(66);
@@ -101,11 +128,10 @@ function showTown(town) {
 }
 
 function render() {
+  drawLand(); // (re)draw the silhouette, then dots on top
   const map = $("map");
-  map.style.width = MAP_W + "px"; map.style.height = MAP_H + "px";
-  map.replaceChildren();
   for (const t of towns) {
-    const px = t.px * MAP_W, py = t.py * MAP_H;
+    const px = cellX(t.gx), py = cellY(t.gy);
     const dot = document.createElement("div");
     if (t.casino) {
       const high = $("parlor").value === "high";
@@ -127,6 +153,7 @@ function render() {
 
 await init();
 towns = (await (await fetch("towns.json")).json()).towns;
+grid = await (await fetch("japan-grid.json")).json();
 render();
 $("parlor").addEventListener("change", () => { render(); if (selected) showTown(selected); });
 for (const el of ["gold", "chips"]) $(el).addEventListener("input", () => selected && showTown(selected));

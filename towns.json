@@ -3,6 +3,8 @@
   {
    "id": 0,
    "name": "Mutsu",
+   "gx": 33,
+   "gy": 3,
    "px": 0.94,
    "py": 0.06,
    "casino": false,
@@ -13,6 +15,8 @@
   {
    "id": 1,
    "name": "Dewa",
+   "gx": 30,
+   "gy": 10,
    "px": 0.852,
    "py": 0.2653,
    "casino": false,
@@ -23,6 +27,8 @@
   {
    "id": 2,
    "name": "Rikuchu",
+   "gx": 31,
+   "gy": 12,
    "px": 0.8813,
    "py": 0.324,
    "casino": false,
@@ -33,6 +39,8 @@
   {
    "id": 3,
    "name": "Rikuzen",
+   "gx": 30,
+   "gy": 13,
    "px": 0.852,
    "py": 0.3533,
    "casino": false,
@@ -43,6 +51,8 @@
   {
    "id": 4,
    "name": "Hitachi",
+   "gx": 31,
+   "gy": 17,
    "px": 0.8813,
    "py": 0.4707,
    "casino": false,
@@ -53,6 +63,8 @@
   {
    "id": 5,
    "name": "Echigo",
+   "gx": 25,
+   "gy": 15,
    "px": 0.7053,
    "py": 0.412,
    "casino": false,
@@ -63,6 +75,8 @@
   {
    "id": 6,
    "name": "Kozuke",
+   "gx": 27,
+   "gy": 17,
    "px": 0.764,
    "py": 0.4707,
    "casino": false,
@@ -73,6 +87,8 @@
   {
    "id": 7,
    "name": "Sagami",
+   "gx": 28,
+   "gy": 21,
    "px": 0.7933,
    "py": 0.588,
    "casino": true,
@@ -89,6 +105,8 @@
   {
    "id": 8,
    "name": "Boso",
+   "gx": 30,
+   "gy": 21,
    "px": 0.852,
    "py": 0.588,
    "casino": false,
@@ -99,6 +117,8 @@
   {
    "id": 9,
    "name": "Kai",
+   "gx": 24,
+   "gy": 19,
    "px": 0.676,
    "py": 0.5293,
    "casino": false,
@@ -109,6 +129,8 @@
   {
    "id": 10,
    "name": "Totomi",
+   "gx": 25,
+   "gy": 22,
    "px": 0.7053,
    "py": 0.6173,
    "casino": false,
@@ -119,6 +141,8 @@
   {
    "id": 11,
    "name": "Mikawa",
+   "gx": 23,
+   "gy": 23,
    "px": 0.6467,
    "py": 0.6467,
    "casino": true,
@@ -135,6 +159,8 @@
   {
    "id": 12,
    "name": "Etchu",
+   "gx": 22,
+   "gy": 16,
    "px": 0.6173,
    "py": 0.4413,
    "casino": false,
@@ -145,6 +171,8 @@
   {
    "id": 13,
    "name": "Mino",
+   "gx": 21,
+   "gy": 20,
    "px": 0.588,
    "py": 0.5587,
    "casino": false,
@@ -155,6 +183,8 @@
   {
    "id": 14,
    "name": "Echizen",
+   "gx": 20,
+   "gy": 18,
    "px": 0.5587,
    "py": 0.5,
    "casino": true,
@@ -171,6 +201,8 @@
   {
    "id": 15,
    "name": "Omi",
+   "gx": 18,
+   "gy": 24,
    "px": 0.5,
    "py": 0.676,
    "casino": false,
@@ -181,6 +213,8 @@
   {
    "id": 16,
    "name": "Ise",
+   "gx": 19,
+   "gy": 25,
    "px": 0.5293,
    "py": 0.7053,
    "casino": false,
@@ -191,6 +225,8 @@
   {
    "id": 17,
    "name": "Yamashiro",
+   "gx": 17,
+   "gy": 22,
    "px": 0.4707,
    "py": 0.6173,
    "casino": false,
@@ -201,6 +237,8 @@
   {
    "id": 18,
    "name": "Tanba",
+   "gx": 15,
+   "gy": 20,
    "px": 0.412,
    "py": 0.5587,
    "casino": false,
@@ -211,6 +249,8 @@
   {
    "id": 19,
    "name": "Settsu",
+   "gx": 17,
+   "gy": 23,
    "px": 0.4707,
    "py": 0.6467,
    "casino": false,
@@ -221,6 +261,8 @@
   {
    "id": 20,
    "name": "Kii",
+   "gx": 17,
+   "gy": 25,
    "px": 0.4707,
    "py": 0.7053,
    "casino": false,
@@ -231,6 +273,8 @@
   {
    "id": 21,
    "name": "Harima",
+   "gx": 15,
+   "gy": 22,
    "px": 0.412,
    "py": 0.6173,
    "casino": false,
@@ -241,6 +285,8 @@
   {
    "id": 22,
    "name": "Izumo",
+   "gx": 12,
+   "gy": 21,
    "px": 0.324,
    "py": 0.588,
    "casino": false,
@@ -251,6 +297,8 @@
   {
    "id": 23,
    "name": "Bitchu",
+   "gx": 11,
+   "gy": 24,
    "px": 0.2947,
    "py": 0.676,
    "casino": false,
@@ -261,6 +309,8 @@
   {
    "id": 24,
    "name": "Aki",
+   "gx": 8,
+   "gy": 24,
    "px": 0.2067,
    "py": 0.676,
    "casino": false,
@@ -271,6 +321,8 @@
   {
    "id": 25,
    "name": "Iyo",
+   "gx": 10,
+   "gy": 26,
    "px": 0.2653,
    "py": 0.7347,
    "casino": false,
@@ -281,6 +333,8 @@
   {
    "id": 26,
    "name": "Tosa",
+   "gx": 12,
+   "gy": 27,
    "px": 0.324,
    "py": 0.764,
    "casino": false,
@@ -291,6 +345,8 @@
   {
    "id": 27,
    "name": "Bungo",
+   "gx": 5,
+   "gy": 27,
    "px": 0.1187,
    "py": 0.764,
    "casino": false,
@@ -301,6 +357,8 @@
   {
    "id": 28,
    "name": "Hizen",
+   "gx": 3,
+   "gy": 28,
    "px": 0.06,
    "py": 0.7933,
    "casino": false,
@@ -311,6 +369,8 @@
   {
    "id": 29,
    "name": "Satsuma",
+   "gx": 3,
+   "gy": 33,
    "px": 0.06,
    "py": 0.94,
    "casino": false,
