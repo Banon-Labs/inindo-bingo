@@ -1,0 +1,12 @@
+{
+  "name": "inindo-bingo-e2e",
+  "private": true,
+  "description": "Playwright end-to-end demo + screenshots for the Inindo Bingo site.",
+  "scripts": {
+    "demo": "playwright test",
+    "demo:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}

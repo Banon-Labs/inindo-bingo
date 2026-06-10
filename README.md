@@ -5,7 +5,15 @@ game *Inindo: Way of the Ninja* — built as an **educational reverse-engineerin
 project**. The game logic was decoded from the original machine code and
 re-implemented from scratch in Rust, then compiled to WebAssembly.
 
-**[▶ Play it](https://Banon-Labs.github.io/inindo-bingo/)**
+**[▶ Play it](https://Banon-Labs.github.io/inindo-bingo/)** · **[🗾 Casino map](https://Banon-Labs.github.io/inindo-bingo/map.html)**
+
+![Full-feature demo](docs/demo.gif)
+
+<p>
+  <img src="docs/shots/04-round-in-progress.png" width="32%" alt="A round in progress">
+  <img src="docs/shots/06-casino-map.png" width="32%" alt="Casino map of Japan">
+  <img src="docs/shots/07-mikawa-rejected-50-gold.png" width="32%" alt="Mikawa high-stakes door rejecting a poor player">
+</p>
 
 ## What this is
 
@@ -21,6 +29,11 @@ re-implemented from scratch in Rust, then compiled to WebAssembly.
 - It contains **no game ROM, graphics, audio, or original text**. All on-screen
   wording is paraphrased; only reconstructed mechanics are shipped.
 - It is not a copy of, or a substitute for, the original game.
+
+## Demo / tests
+
+A Playwright end-to-end script drives the whole feature set and records the
+GIF above plus per-feature screenshots. See [`e2e/`](e2e/).
 
 ## Legal
 
